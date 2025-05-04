@@ -59,7 +59,6 @@ const CatalogPage = () => {
           <h2>Comedor</h2>
           <div className="subcategory">
             <Link to="/comedores">Comedores</Link>
-            <Link to="/sillas-comedor">Sillas</Link>
           </div>
         </div>
       </section>
@@ -71,7 +70,6 @@ const CatalogPage = () => {
           <div className="subcategory">
             <Link to="/cocinas-integrales">Cocinas Integrales</Link>
             <Link to="/alacenas">Alacenas</Link>
-            <Link to="/mueble-portagarrafon">Mueble portagarrafón</Link>
           </div>
         </div>
       </section>
