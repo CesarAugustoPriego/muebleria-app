@@ -1,0 +1,86 @@
+.sofas-page {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+  }
+  
+  .sofas-header {
+    background-color: #f4f4f4;
+    text-align: center;
+    padding: 50px 20px;
+    margin-bottom: 40px;
+  }
+  
+  .sofas-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+  }
+  
+  .sofas-header p {
+    font-size: 1.2rem;
+    color: #666;
+  }
+  
+  .product-list {
+    display: flex;
+    justify-content: center; /* Centra los productos */
+    gap: 20px; /* Espacio entre los productos */
+    flex-wrap: wrap; /* Hace que los productos se ajusten en varias filas si es necesario */
+    margin-top: 20px; /* Espaciado superior */
+  }
+  
+  .product-card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+    width: 250px; /* Controla el tamaño de las tarjetas */
+    margin-bottom: 20px; /* Espacio en la parte inferior de cada tarjeta */
+  }
+  
+  .product-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+  }
+  
+  .product-card h3 {
+    font-size: 1.5rem;
+    margin: 15px 0;
+  }
+  
+  .product-card p {
+    font-size: 1.2rem;
+    color: #333;
+  }
+  
+  .product-options {
+    margin-top: 15px;
+  }
+  
+  .product-options label {
+    font-size: 1rem;
+    margin-right: 10px;
+  }
+  
+  .product-options input {
+    width: 60px;
+    padding: 5px;
+    font-size: 1rem;
+  }
+  
+  .product-options button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    color: white;
+    background-color: #28a745;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .product-options button:hover {
+    background-color: #218838;
+  }
+  

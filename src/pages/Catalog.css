@@ -1,0 +1,60 @@
+/* Catalog.css */
+.catalog-header {
+  display: flex;
+  flex-direction: column; /* Centra los elementos de arriba a abajo */
+  justify-content: center; /* Centra el contenido verticalmente */
+  align-items: center; /* Centra el contenido horizontalmente */
+  padding: 80px 20px 40px 20px; /* Ajusta el padding para que el texto no quede muy pegado */
+  text-align: center;
+  color: white;
+  width: 100%; /* Asegura que el encabezado ocupe todo el ancho de la página */
+  height: 400px; /* Ajusta la altura según lo que necesites */
+  background-size: cover; /* Hace que la imagen de fondo cubra todo el encabezado */
+  background-position: center; /* Centra la imagen de fondo */
+  background-repeat: no-repeat; /* Evita que la imagen se repita */
+  position: relative; /* Para alinear correctamente el contenido */
+  margin: 0; /* Elimina cualquier margen extra */
+}
+
+.catalog-header-content h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.catalog-header-content p {
+  font-size: 1.2rem;
+  margin-top: 10px;
+}
+
+.catalog-section {
+  margin: 20px 0;
+}
+
+.category {
+  background-color: #e6e6e6;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.category h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.subcategory {
+  margin-top: 10px;
+}
+
+.subcategory a {
+  display: block;
+  color: #333;
+  font-size: 1.1rem;
+  text-decoration: none;
+  margin-bottom: 8px;
+}
+
+.subcategory a:hover {
+  text-decoration: underline;
+}
