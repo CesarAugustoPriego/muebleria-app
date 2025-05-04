@@ -1,0 +1,90 @@
+.carrito-container {
+    padding: 2rem;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  h2 {
+    margin-bottom: 1.5rem;
+    color: #2d3748;
+  }
+  
+  .carrito-items {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .carrito-item {
+    display: flex;
+    background: #f7fafc;
+    border-radius: 10px;
+    padding: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .carrito-item img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-right: 1rem;
+  }
+  
+  .item-info h4 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+  }
+  
+  .item-info p {
+    margin: 0.3rem 0;
+  }
+  
+  .cantidad-control {
+    margin: 0.5rem 0;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  
+  .cantidad-control input {
+    width: 60px;
+    padding: 5px;
+  }
+  
+  .eliminar {
+    background-color: #e53e3e;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .resumen-carrito {
+    margin-top: 2rem;
+    text-align: right;
+  }
+  
+  .pago-btn {
+    background-color: #667eea;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .pago-btn:hover {
+    background-color: #5a67d8;
+  }
+  
+/* src/pages/CarritoPage.css */
+.carrito-container {
+    padding: auto;
+    margin-top: 60px;  /* deja espacio para la navbar fija */
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
