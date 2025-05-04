@@ -4,29 +4,41 @@ html {
   
   .homepage {
     transition: margin-left 0.3s ease;
+    padding-left: 0;
+    position: relative;
+    z-index: 1;
   }
   
-  /* Botón flotante de tres puntos */
+  /* Centro de contenido reutilizable */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  
+  /* Botón flotante */
   .dot-menu {
     position: fixed;
-    left: 1rem;
     top: 1rem;
+    left: 1rem;
     display: flex;
     flex-direction: column;
     gap: 5px;
+    width: 30px;
+    height: 24px;
     background: white;
     padding: 0.5rem;
     border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     cursor: pointer;
     z-index: 1001;
   }
   
   .dot-menu .dot {
-    width: 8px;
-    height: 8px;
-    background: #333;
-    border-radius: 50%;
+    width: 100%;
+    height: 3px;
+    background-color: #2D4B7D;
+    border-radius: 2px;
   }
   
   /* Sidebar */
@@ -36,10 +48,8 @@ html {
     left: -250px;
     width: 250px;
     height: 100%;
-    background: #1e1e1e;
-    color: white;
-    padding-top: 4rem;
-    padding-left: 1.5rem;
+    background-color: #222;
+    padding-top: 60px;
     transition: left 0.3s ease;
     z-index: 1000;
   }
@@ -66,7 +76,7 @@ html {
   }
   
   .offcanvas-nav a:hover {
-    color: #ff7f50;
+    color: #F6A600;
   }
   
   /* Hero */
@@ -75,10 +85,28 @@ html {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background-size: cover;
+    background-position: center;
+    position: relative;
     color: white;
     text-align: center;
     padding: 2rem;
+    overflow: hidden;
+  }
+  
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 0;
+  }
+  
+  .hero > * {
+    z-index: 1;
   }
   
   .hero-title {
@@ -100,39 +128,44 @@ html {
   
   /* Botones */
   .btn {
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    text-decoration: none;
-    transition: all 0.3s ease;
+    padding: 12px 24px;
+    background-color: #F6A600;
+    color: #FFFFFF;
+    border: none;
     cursor: pointer;
-    font-weight: 500;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn:hover {
+    background-color: #F18A00;
   }
   
   .primary {
-    background: #ff7f50;
+    background: #F6A600;
     color: white;
     border: none;
   }
   
   .primary:hover {
-    background: #e76b3c;
+    background: #F18A00;
   }
   
   .outline {
     background: transparent;
-    color: #ff7f50;
-    border: 2px solid #ff7f50;
+    color: #F6A600;
+    border: 2px solid #F6A600;
   }
   
   .outline:hover {
-    background: #ff7f50;
+    background: #F6A600;
     color: white;
   }
   
-  /* Secciones generales */
+  /* Secciones */
   .section {
-    padding: 4rem 1rem;
+    background-color: #F5F5F5;
     text-align: center;
+    padding: 60px 0;
   }
   
   .section h2 {
@@ -140,6 +173,7 @@ html {
     margin-bottom: 2rem;
   }
   
+  /* Centramos todas las cards y contenido interno */
   .cards {
     display: flex;
     justify-content: center;
@@ -147,21 +181,25 @@ html {
     gap: 1.5rem;
   }
   
-  .card {
+  /* Reutilizable */
+  .card,
+  .product-card,
+  .testimonial {
     background: white;
     padding: 1.5rem;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-    width: 200px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
   }
   
-  /* Productos */
+  /* Cards específicas */
+  .card {
+    width: 200px;
+    text-align: center;
+  }
+  
   .product-card {
-    background: white;
-    padding: 1rem;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
     width: 220px;
+    text-align: center;
   }
   
   .product-image {
@@ -174,9 +212,7 @@ html {
   
   /* Testimonios */
   .testimonial {
-    background: white;
-    padding: 1.5rem;
-    border-left: 4px solid #ff7f50;
+    border-left: 4px solid #F6A600;
     font-style: italic;
     max-width: 300px;
   }
@@ -212,31 +248,14 @@ html {
   
   /* Footer */
   .footer {
-    background: #222;
+    background: #1A3A5A;
     color: #ccc;
     padding: 2rem 1rem;
     text-align: center;
     font-size: 0.875rem;
   }
-
-  .offcanvas-nav {
-    position: fixed;
-    top: 0;
-    left: -100%;
-    width: 250px;
-    height: 100%;
-    background: #1e1e1e;
-    color: white;
-    padding-top: 4rem;
-    padding-left: 1.5rem;
-    transition: left 0.3s ease;
-    z-index: 1000;
-  }
   
-  .offcanvas-nav.open {
-    left: 0;
-  }
-
+  /* Menú hamburguesa */
   .hamburger {
     position: fixed;
     top: 1rem;
@@ -255,5 +274,34 @@ html {
     background-color: #333;
     border-radius: 2px;
     transition: all 0.3s ease;
+  }
+  
+  /* Ajustes barra lateral */
+  .homepage.with-nav-open {
+    margin-left: 250px;
+  }
+  
+  .offcanvas-nav {
+    left: -250px;
+  }
+  
+  .offcanvas-nav.open {
+    left: 0;
+  }
+
+  .offcanvas-nav ul {
+    list-style: none;
+    padding: 0;
+    text-align: center; /* Centra horizontalmente el texto */
+  }
+  
+  
+  .main-content {
+    transition: margin-left 0.3s ease;
+    margin-left: 0;
+  }
+  
+  .main-content.shifted {
+    margin-left: 250px;
   }
   
