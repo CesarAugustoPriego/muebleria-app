@@ -16,6 +16,7 @@ import CentrosEntretenimientoPage from './pages/CentrosEntretenimientoPage';
 import ComedoresPage from './pages/ComedoresPage';
 import CocinasPage from './pages/CocinasPage'; 
 import AlacenasPage from './pages/AlacenasPage'; 
+import CarritoPage from './pages/CarritoPage'; 
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
         <Route path="/comedores" element={<ComedoresPage />} />
         <Route path="/cocinas-integrales" element={<CocinasPage />} />
         <Route path="/alacenas" element={<AlacenasPage />} />
+        <Route path="/carrito" element={<CarritoPage />} />
       </Routes>
     </Router>
   );

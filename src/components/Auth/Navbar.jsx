@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import './Navbar.css'; // Asegúrate de tener el archivo CSS adecuado
+import { Link, useLocation } from 'react-router-dom';
+import './Navbar.css';
 
 const Navbar = () => {
   const [navOpen, setNavOpen] = useState(false);
+  const location = useLocation();
+  const isHome = location.pathname === '/';
 
   const toggleNav = () => setNavOpen(o => !o);
+  const cerrarMenu = () => setNavOpen(false);
 
   return (
     <div className={`navbar-container ${navOpen ? 'with-nav-open' : ''}`}>
@@ -17,12 +20,17 @@ const Navbar = () => {
 
       <nav className={`offcanvas-nav ${navOpen ? 'open' : ''}`}>
         <ul>
-          <li><Link to="/" onClick={() => setNavOpen(false)}>Inicio</Link></li>
-          <li><Link to="/catalogo" onClick={() => setNavOpen(false)}>Catálogo</Link></li>
-          <li><Link to="#tipos" onClick={() => setNavOpen(false)}>Tipos</Link></li>
-          <li><Link to="#productos" onClick={() => setNavOpen(false)}>Productos destacados</Link></li>
-          <li><Link to="#testimonios" onClick={() => setNavOpen(false)}>Testimonios</Link></li>
-          <li><Link to="#contacto" onClick={() => setNavOpen(false)}>Contacto</Link></li>
+          <li><Link to="/" onClick={cerrarMenu}>Inicio</Link></li>
+          <li><Link to="/catalogo" onClick={cerrarMenu}>Catálogo</Link></li>
+          {isHome && (
+            <>
+              <li><a href="#tipos" onClick={cerrarMenu}>Tipos</a></li>
+              <li><a href="#productos" onClick={cerrarMenu}>Productos destacados</a></li>
+              <li><a href="#testimonios" onClick={cerrarMenu}>Testimonios</a></li>
+              <li><a href="#contacto" onClick={cerrarMenu}>Contacto</a></li>
+            </>
+          )}
+          <li><Link to="/carrito" onClick={cerrarMenu}>🛒 Carrito</Link></li>
         </ul>
       </nav>
     </div>
