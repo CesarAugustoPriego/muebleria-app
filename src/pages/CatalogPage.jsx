@@ -49,7 +49,6 @@ const CatalogPage = () => {
             <Link to="/mesas-centro">Mesas de centro</Link>
             <Link to="/libreros">Libreros</Link>
             <Link to="/centros-entretenimiento">Centros de entretenimiento</Link>
-            <Link to="/decoracion">Decoración</Link>
           </div>
         </div>
       </section>

@@ -49,10 +49,13 @@
     margin: 15px 0;
   }
   
-  .product-card p {
-    font-size: 1.2rem;
-    color: #333;
+  .product-card img {
+    width: 100%;
+    height: 200px; /* Fuerza una altura fija uniforme */
+    object-fit: cover; /* Recorta para llenar el espacio sin deformar */
+    border-radius: 10px;
   }
+  
   
   .product-options {
     margin-top: 15px;

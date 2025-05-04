@@ -30,16 +30,13 @@
     overflow-x: hidden; /* Elimina cualquier posible desplazamiento horizontal */
   }
   
-  .product-card {
-    background-color: #fff;
+  .product-card img {
+    width: 100%;
+    height: 200px; /* Fuerza una altura fija uniforme */
+    object-fit: cover; /* Recorta para llenar el espacio sin deformar */
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    text-align: center;
-    width: 250px; /* Controla el tamaño de las tarjetas */
-    margin-bottom: 20px; /* Espacio en la parte inferior de cada tarjeta */
-    box-sizing: border-box; /* Para asegurar que el padding no afecte el tamaño total */
   }
+  
   
   .product-card img {
     width: 100%;

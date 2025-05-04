@@ -11,6 +11,8 @@ import ArmariosPage from './pages/ArmariosPage';
 import TocadoresPage from './pages/TocadoresPage'; // Agregar TocadoresPage
 import SofasPage from './pages/SofasPage'; // Agregar TocadoresPage
 import MesasDeCentroPage from './pages/MesasDeCentroPage'; // Agregar TocadoresPage
+import LibrerosPage from './pages/LibrerosPage'; // Agregar TocadoresPage
+import CentrosEntretenimientoPage from './pages/CentrosEntretenimientoPage'; // Agregar TocadoresPage
 
 function App() {
   return (
@@ -28,6 +30,8 @@ function App() {
         <Route path="/tocadores" element={<TocadoresPage />} />
         <Route path="/sofas" element={<SofasPage />} />
         <Route path="/mesas-centro" element={<MesasDeCentroPage />} />
+        <Route path="/libreros" element={<LibrerosPage />} />
+        <Route path="/centros-entretenimiento" element={<CentrosEntretenimientoPage />} />
       </Routes>
     </Router>
   );
