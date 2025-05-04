@@ -1,18 +1,16 @@
 /* Navbar.css */
 .navbar-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    background-color: #667eea;
-    color: white;
-    z-index: 9999;
-    padding: 10px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  }
+  position: absolute; /* o incluso 'relative' si no necesitas que sea fija */
+  top: 0;
+  left: 0;
+  padding: 10px 20px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  background-color: transparent; /* ← Elimina el color morado */
+  box-shadow: none;
+}
+
   
   .hamburger {
     display: flex;
@@ -49,4 +47,3 @@
     color: white;
     font-size: 18px;
   }
-  
