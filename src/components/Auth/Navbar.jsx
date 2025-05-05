@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './Navbar.css';
+import logo from '../../assets/img/Logo.png';  // tu logo
 
 const Navbar = () => {
   const [navOpen, setNavOpen] = useState(false);
@@ -12,10 +13,12 @@ const Navbar = () => {
 
   return (
     <div className={`navbar-container ${navOpen ? 'with-nav-open' : ''}`}>
-      <div className="hamburger" onClick={toggleNav}>
-        <span></span>
-        <span></span>
-        <span></span>
+      <div className="navbar-left">
+        <div className="hamburger" onClick={toggleNav}>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
       </div>
 
       <nav className={`offcanvas-nav ${navOpen ? 'open' : ''}`}>
@@ -31,9 +34,13 @@ const Navbar = () => {
             </>
           )}
           <li><Link to="/carrito" onClick={cerrarMenu}>🛒 Carrito</Link></li>
-          <li><Link to="/mis-compras" onClick={cerrarMenu}>🧾 Mis Compras</Link></li> {/* Nueva opción */}
+          <li><Link to="/mis-compras" onClick={cerrarMenu}>🧾 Mis Compras</Link></li>
         </ul>
       </nav>
+
+      <div className="navbar-right">
+        <img src={logo} alt="Logo" className="navbar-logo" onClick={() => cerrarMenu()} />
+      </div>
     </div>
   );
 };

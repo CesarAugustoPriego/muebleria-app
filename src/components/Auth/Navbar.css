@@ -1,49 +1,83 @@
-/* Navbar.css */
+/* contenedor principal transparente */
 .navbar-container {
-  position: absolute; /* o incluso 'relative' si no necesitas que sea fija */
+  position: fixed;
   top: 0;
   left: 0;
-  padding: 10px 20px;
-  z-index: 9999;
+  right: 0;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  background-color: transparent; /* ← Elimina el color morado */
-  box-shadow: none;
+  padding: 0 20px;
+  height: 60px;
+  background: transparent;   /* totalmente transparente */
+  box-shadow: none;          /* sin sombra */
+  border-bottom: none;       /* sin línea inferior */
+  z-index: 9999;
 }
 
-  
-  .hamburger {
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
-  }
-  
-  .hamburger span {
-    width: 25px;
-    height: 3px;
-    background-color: white;
-    margin: 4px 0;
-  }
-  
-  .offcanvas-nav {
-    display: none;
-  }
-  
-  .offcanvas-nav.open {
-    display: block;
-  }
-  
-  .offcanvas-nav ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .offcanvas-nav ul li {
-    padding: 10px;
-  }
-  
-  .offcanvas-nav ul li a {
-    text-decoration: none;
-    color: white;
-    font-size: 18px;
-  }
+/* zona izquierda: hamburger */
+.navbar-left {
+  display: flex;
+  align-items: center;
+}
+
+/* hamburger unchanged */
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 10px;
+}
+.hamburger span {
+  width: 25px;
+  height: 3px;
+  background-color: white;
+  border-radius: 2px;
+  transition: background 0.3s;
+}
+
+/* off‑canvas menu */
+.offcanvas-nav {
+  position: fixed;
+  top: 0;
+  left: -250px;
+  width: 250px;
+  height: 100%;
+  background-color: #222;
+  padding-top: 60px;
+  transition: left 0.3s ease;
+  z-index: 1000;
+}
+.offcanvas-nav.open {
+  left: 0;
+}
+.offcanvas-nav ul {
+  list-style: none;
+  padding: 0;
+}
+.offcanvas-nav li {
+  margin: 1rem 0;
+}
+.offcanvas-nav a {
+  color: #fefefe;
+  text-decoration: none;
+  font-size: 1.1rem;
+  padding: 0.5rem 1rem;
+  display: block;
+}
+.offcanvas-nav a:hover {
+  background-color: #333;
+  color: #F6A600;
+}
+
+/* zona derecha: logo */
+.navbar-right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+.navbar-logo {
+  max-height: 40px;
+  cursor: pointer;
+}

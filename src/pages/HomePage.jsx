@@ -23,7 +23,7 @@ const HomePage = () => {
         }}
       >
         <div className="hero-content">
-          <h1 className="hero-title">Mueblería El Buen Estilo</h1>
+          <h1 className="hero-title">Mueblerías Danny</h1>
           <p className="hero-subtitle">Calidad, confort y diseño para tu hogar</p>
           <div className="hero-buttons">
             <Link to="/login" className="btn primary">Iniciar Sesión</Link>
@@ -43,25 +43,26 @@ const HomePage = () => {
       </section>
 
       <section id="productos" className="section productos">
-        <h2>Productos Destacados</h2>
-        <div className="cards products">
-          <div className="product-card">
-            <div className="product-image" />
-            <h4>Sofá Moderno</h4>
-            <p>$12,000.00</p>
-          </div>
-          <div className="product-card">
-            <div className="product-image" />
-            <h4>Comedor minimalista</h4>
-            <p>$9,600.00</p>
-          </div>
-          <div className="product-card">
-            <div className="product-image" />
-            <h4>Cama King Size</h4>
-            <p>$6,500.00</p>
-          </div>
-        </div>
-      </section>
+  <h2 className="section-title">Productos Destacados</h2>
+  <div className="cards products">
+    <div className="product-card">
+      <div className="product-image" />
+      <h4>Sofá Moderno</h4>
+      <p>$12,000.00</p>
+    </div>
+    <div className="product-card">
+      <div className="product-image" />
+      <h4>Comedor minimalista</h4>
+      <p>$9,600.00</p>
+    </div>
+    <div className="product-card">
+      <div className="product-image" />
+      <h4>Cama King Size</h4>
+      <p>$6,500.00</p>
+    </div>
+  </div>
+</section>
+
 
       <section id="testimonios" className="section testimonios">
         <h2>Lo que dicen nuestros clientes</h2>
