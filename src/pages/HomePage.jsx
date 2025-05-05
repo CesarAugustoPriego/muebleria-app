@@ -123,7 +123,7 @@ const HomePage = () => {
       </section>
 
       <footer className="footer">
-        <p>© 2025 Mueblería El Buen Estilo. Todos los derechos reservados.</p>
+        <p>© 2025 Mueblerías Danny. Todos los derechos reservados.</p>
       </footer>
     </div>
   );
