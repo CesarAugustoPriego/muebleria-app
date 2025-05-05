@@ -279,3 +279,31 @@ html {
   text-align: center;
   font-size: 0.875rem;
 }
+
+.section-title {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  text-align: center !important;
+  color: #333;
+}
+
+.product-card .product-image {
+  width: 100%;
+  height: 150px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.productos-destacados-titulo {
+  font-size: 2rem;
+  color: #333;
+  text-align: center;
+  width: 100%;
+  margin-bottom: 2rem;
+  font-weight: bold;
+  display: block;
+  text-transform: uppercase;
+}
+

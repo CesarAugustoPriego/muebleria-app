@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Navbar from '../components/Auth/Navbar';  // Importar el componente Navbar
+import Navbar from '../components/Auth/Navbar';
 import './HomePage.css';
-import heroBg from '../assets/img/imghero-bg.png'; // Asegúrate de tener esta imagen en la ruta correcta
+import heroBg from '../assets/img/imghero-bg.png';
+import sofaImg from '../assets/img/sofa1.jpg';
+import comedorImg from '../assets/img/cocina1.jpg';
+import camaImg from '../assets/img/cama1.jpg';
 
 const HomePage = () => {
   const [navOpen, setNavOpen] = useState(false);
@@ -10,7 +13,7 @@ const HomePage = () => {
 
   return (
     <div className={`homepage ${navOpen ? 'with-nav-open' : ''}`}>
-      <Navbar /> {/* Aquí se incluye la barra de navegación */}
+      <Navbar />
 
       <header
         id="hero"
@@ -42,37 +45,68 @@ const HomePage = () => {
         </div>
       </section>
 
-      <section id="productos" className="section productos">
-  <h2 className="section-title">Productos Destacados</h2>
-  <div className="cards products">
-    <div className="product-card">
-      <div className="product-image" />
-      <h4>Sofá Moderno</h4>
-      <p>$12,000.00</p>
-    </div>
-    <div className="product-card">
-      <div className="product-image" />
-      <h4>Comedor minimalista</h4>
-      <p>$9,600.00</p>
-    </div>
-    <div className="product-card">
-      <div className="product-image" />
-      <h4>Cama King Size</h4>
-      <p>$6,500.00</p>
-    </div>
-  </div>
-</section>
+      {/* seccion prodctos destacadosS */}
+      <div style={{ width: '100%', textAlign: 'center', padding: '60px 20px', backgroundColor: '#F5F5F5' }} id="productos">
+        {/* Solo el título "Productos destacados" centrado */}
+        <h2 style={{
+          textAlign: 'center',
+          display: 'block',
+          width: '100%',
+          fontSize: '2rem',
+          fontWeight: 'bold',
+          marginBottom: '2rem',
+          color: '#333'
+        }}>
+          Productos destacados
+        </h2>
 
+
+        {/* Un espacio para separar el título de las tarjetas */}
+        <div style={{ height: '2rem' }}></div>
+
+        {/* Tarjetas de productos */}
+        <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '1.5rem' }}>
+          <div className="product-card">
+            <div
+              className="product-image"
+              style={{ backgroundImage: `url(${sofaImg})` }}
+            />
+            <h4>Sofá Moderno</h4>
+            <p>$12,000.00</p>
+            <button className="btn primary">Agregar al carrito</button>
+          </div>
+
+          <div className="product-card">
+            <div
+              className="product-image"
+              style={{ backgroundImage: `url(${comedorImg})` }}
+            />
+            <h4>Comedor Minimalista</h4>
+            <p>$9,600.00</p>
+            <button className="btn primary">Agregar al carrito</button>
+          </div>
+
+          <div className="product-card">
+            <div
+              className="product-image"
+              style={{ backgroundImage: `url(${camaImg})` }}
+            />
+            <h4>Cama King Size</h4>
+            <p>$6,500.00</p>
+            <button className="btn primary">Agregar al carrito</button>
+          </div>
+        </div>
+      </div>
 
       <section id="testimonios" className="section testimonios">
         <h2>Lo que dicen nuestros clientes</h2>
         <div className="cards">
           <blockquote className="testimonial">
-            “Excelente calidad y servicio. ¡Lo recomiendo!”
+            "Excelente calidad y servicio. ¡Lo recomiendo!"
             <cite>— Ana G.</cite>
           </blockquote>
           <blockquote className="testimonial">
-            “Los muebles llegaron a tiempo y tal cual esperaba.”
+            "Los muebles llegaron a tiempo y tal cual esperaba."
             <cite>— Luis M.</cite>
           </blockquote>
         </div>
