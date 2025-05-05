@@ -9,7 +9,7 @@ export default function Login({ onSubmit }) {
           {/* Aquí se puede agregar el logo de la empresa en el futuro */}
           <img src="/path-to-your-logo.png" alt="Logo" className="logo" />
         </div>
-        <h2 className="login-title">Login Empleado</h2>
+        <h2 className="login-title">Inicia sesión</h2>
         <form className="login-form" onSubmit={onSubmit}>
           <input type="text" name="usuario" placeholder="Usuario" className="login-input" />
           <input type="password" name="password" placeholder="Contraseña" className="login-input" />

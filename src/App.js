@@ -17,6 +17,9 @@ import ComedoresPage from './pages/ComedoresPage';
 import CocinasPage from './pages/CocinasPage'; 
 import AlacenasPage from './pages/AlacenasPage'; 
 import CarritoPage from './pages/CarritoPage'; 
+import AgregarProducto from './adminPages/AgregarProducto'; // Ajusta si la carpeta está en otra ruta
+import DashboardAdmin from './adminPages/DashboardAdmin';  // Importa el DashboardAdmin
+
 
 function App() {
   return (
@@ -40,6 +43,8 @@ function App() {
         <Route path="/cocinas-integrales" element={<CocinasPage />} />
         <Route path="/alacenas" element={<AlacenasPage />} />
         <Route path="/carrito" element={<CarritoPage />} />
+        <Route path="/admin/agregar-producto" element={<AgregarProducto />} />
+        <Route path="/admin/dashboard" element={<DashboardAdmin />} />
       </Routes>
     </Router>
   );

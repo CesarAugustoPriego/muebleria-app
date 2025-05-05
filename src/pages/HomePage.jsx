@@ -37,8 +37,8 @@ const HomePage = () => {
         <div className="cards">
           <div className="card"><h3>Sala</h3></div>
           <div className="card"><h3>Comedor</h3></div>
-          <div className="card"><h3>Recámara</h3></div>
-          <div className="card"><h3>Oficina</h3></div>
+          <div className="card"><h3>Recámara y estudio</h3></div>
+          <div className="card"><h3>Cocina</h3></div>
         </div>
       </section>
 
@@ -48,17 +48,17 @@ const HomePage = () => {
           <div className="product-card">
             <div className="product-image" />
             <h4>Sofá Moderno</h4>
-            <p>$8,499.00</p>
+            <p>$12,000.00</p>
           </div>
           <div className="product-card">
             <div className="product-image" />
-            <h4>Juego de Comedor</h4>
-            <p>$12,299.00</p>
+            <h4>Comedor minimalista</h4>
+            <p>$9,600.00</p>
           </div>
           <div className="product-card">
             <div className="product-image" />
-            <h4>Cama King</h4>
-            <p>$9,799.00</p>
+            <h4>Cama King Size</h4>
+            <p>$6,500.00</p>
           </div>
         </div>
       </section>

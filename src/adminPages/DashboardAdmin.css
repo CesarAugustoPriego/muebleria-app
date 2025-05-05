@@ -1,0 +1,142 @@
+.dashboard-admin {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background-color: #f4f4f9;
+  }
+  
+  .dashboard-admin .dashboard-container {
+    margin-top: 20px;
+  }
+  
+  .dashboard-admin h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    color: #333;
+  }
+  
+  .dashboard-admin .ingresos-container {
+    background-color: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dashboard-admin h3 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  .dashboard-admin .ingresos-cards {
+    display: flex;
+    justify-content: space-around;
+    gap: 20px;
+  }
+  
+  .dashboard-admin .ingresos-card {
+    background-color: #f8f9fa;
+    padding: 15px 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    flex: 1;
+  }
+  
+  .dashboard-admin .ingresos-card h4 {
+    font-size: 1.5rem;
+    color: #333;
+  }
+  
+  .dashboard-admin .ingresos-card p {
+    font-size: 1.6rem;
+    color: #28a745;
+    font-weight: bold;
+  }
+  
+  .dashboard-admin .acciones-container {
+    margin-top: 20px;
+    text-align: center;
+  }
+  
+  .dashboard-admin .agregar-producto-btn {
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  
+  .dashboard-admin .agregar-producto-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  .dashboard-admin .compras-container {
+    margin-top: 30px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dashboard-admin table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .dashboard-admin table th,
+  .dashboard-admin table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .dashboard-admin table th {
+    background-color: #f4f4f4;
+    color: #333;
+  }
+  
+  .dashboard-admin table td {
+    color: #666;
+  }
+  
+  /* Estilo para columna Dirección de Entrega */
+  .dashboard-admin table th:nth-child(6),
+  .dashboard-admin table td:nth-child(6) {
+    min-width: 200px;
+    white-space: pre-wrap;
+  }
+  
+  /* Estilo para columna Estado del Pedido */
+  .dashboard-admin table th:nth-child(7),
+  .dashboard-admin table td:nth-child(7) {
+    min-width: 140px;
+  }
+  
+  /* Select de estado */
+  .dashboard-admin select {
+    padding: 5px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  .dashboard-admin button {
+    padding: 6px 12px;
+    font-size: 1rem;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .dashboard-admin button:hover {
+    background-color: #218838;
+  }
+  
