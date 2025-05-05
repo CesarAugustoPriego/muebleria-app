@@ -19,6 +19,8 @@ import AlacenasPage from './pages/AlacenasPage';
 import CarritoPage from './pages/CarritoPage'; 
 import AgregarProducto from './adminPages/AgregarProducto'; // Ajusta si la carpeta está en otra ruta
 import DashboardAdmin from './adminPages/DashboardAdmin';  // Importa el DashboardAdmin
+import MisComprasPage from './pages/MisComprasPage';
+
 
 
 function App() {
@@ -45,6 +47,8 @@ function App() {
         <Route path="/carrito" element={<CarritoPage />} />
         <Route path="/admin/agregar-producto" element={<AgregarProducto />} />
         <Route path="/admin/dashboard" element={<DashboardAdmin />} />
+        <Route path="/mis-compras" element={<MisComprasPage />} />
+
       </Routes>
     </Router>
   );

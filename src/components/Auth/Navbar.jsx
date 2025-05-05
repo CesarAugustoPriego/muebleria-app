@@ -31,6 +31,7 @@ const Navbar = () => {
             </>
           )}
           <li><Link to="/carrito" onClick={cerrarMenu}>🛒 Carrito</Link></li>
+          <li><Link to="/mis-compras" onClick={cerrarMenu}>🧾 Mis Compras</Link></li> {/* Nueva opción */}
         </ul>
       </nav>
     </div>

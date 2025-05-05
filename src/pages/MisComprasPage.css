@@ -1,0 +1,60 @@
+.mis-compras-container {
+    padding: 40px 20px;
+    max-width: 900px;
+    margin: 0 auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .compra-card {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  }
+  
+  .compra-card h3 {
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .compra-card p {
+    margin: 8px 0;
+  }
+  
+  .productos {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  
+  .producto {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+  }
+  
+  .producto img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  
+  .producto-info h4 {
+    font-size: 1.1rem;
+    margin: 0;
+  }
+  
+  .producto-info p {
+    color: #555;
+  }
+  
+  .total {
+    font-weight: bold;
+    color: #1a202c;
+  }
+  
