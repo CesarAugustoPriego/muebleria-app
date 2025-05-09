@@ -1,15 +1,23 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Navbar.css';
-import logo from '../../assets/img/Logo.png';  // tu logo
+import logo from '../../assets/img/Logo.png';
 
 const Navbar = () => {
   const [navOpen, setNavOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+
   const isHome = location.pathname === '/';
+  const isLoggedIn = !!localStorage.getItem('token');
 
   const toggleNav = () => setNavOpen(o => !o);
   const cerrarMenu = () => setNavOpen(false);
+
+  const cerrarSesion = () => {
+    localStorage.clear();
+    navigate('/login');
+  };
 
   return (
     <div className={`navbar-container ${navOpen ? 'with-nav-open' : ''}`}>
@@ -35,6 +43,11 @@ const Navbar = () => {
           )}
           <li><Link to="/carrito" onClick={cerrarMenu}>🛒 Carrito</Link></li>
           <li><Link to="/mis-compras" onClick={cerrarMenu}>🧾 Mis Compras</Link></li>
+          {isLoggedIn && (
+            <li>
+              <button onClick={cerrarSesion} className="cerrar-sesion-btn">Cerrar Sesión</button>
+            </li>
+          )}
         </ul>
       </nav>
 
