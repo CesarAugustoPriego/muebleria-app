@@ -1,96 +1,65 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './AgregarProducto.css';
 import Navbar from '../components/Auth/Navbar';
 
-const AgregarProducto = () => {
-  const [nombre, setNombre] = useState('');
-  const [precio, setPrecio] = useState('');
-  const [categoria, setCategoria] = useState('');
-  const [imagen, setImagen] = useState(null);
+export default function AgregarProducto() {
+  const [categorias, setCategorias] = useState([]);
+  const [modelos, setModelos]       = useState([]);
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    fetch('/api/categorias').then(r => r.json()).then(setCategorias);
+    fetch('/api/modelos').then(r => r.json()).then(setModelos);
+  }, []);
+
+  const handleSubmit = async e => {
     e.preventDefault();
+    const form = e.target;
+    const fd = new FormData();
+    fd.append('nombre', form.nombre.value);
+    fd.append('descripcion', form.descripcion.value);
+    fd.append('precio', form.precio.value);
+    fd.append('existencia', form.existencia.value);
+    fd.append('fk_categoria', form.fk_categoria.value);
+    fd.append('fk_modelo', form.fk_modelo.value);
+    fd.append('imagen', form.imagen.files[0]);
 
-    const nuevoProducto = {
-      nombre,
-      precio,
-      categoria,
-      imagen
-    };
-
-    console.log('Producto agregado:', nuevoProducto);
-
-    setNombre('');
-    setPrecio('');
-    setCategoria('');
-    setImagen(null);
+    const res = await fetch('/api/productos', { method: 'POST', body: fd });
+    if (res.ok) {
+      alert('✅ Agregado');
+      form.reset();
+    } else {
+      alert('❌ Error');
+    }
   };
 
   return (
     <div className="agregar-producto-page">
       <Navbar />
       <div className="form-container">
-        <h2>Agregar Nuevo Producto</h2>
+        <h2>Agregar Producto</h2>
         <form onSubmit={handleSubmit}>
+          <label>Nombre<input name="nombre" required /></label>
+          <label>Descripción<textarea name="descripcion" required /></label>
+          <label>Precio<input name="precio" type="number" step="0.01" required /></label>
+          <label>Stock<input name="existencia" type="number" required /></label>
           <label>
-            Nombre del Mueble:
-            <input
-              type="text"
-              value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
-              required
-            />
-          </label>
-
-          <label>
-            Costo:
-            <input
-              type="text"
-              inputMode="decimal"
-              value={precio}
-              onChange={(e) => setPrecio(e.target.value)}
-              required
-            />
-          </label>
-
-          <label>
-            Categoría:
-            <select
-              value={categoria}
-              onChange={(e) => setCategoria(e.target.value)}
-              required
-            >
-              <option value="">Selecciona una categoría</option>
-              <option value="Camas">Camas</option>
-              <option value="Literas">Literas</option>
-              <option value="Escritorios">Escritorios</option>
-              <option value="Armarios">Armarios</option>
-              <option value="Tocadores">Tocadores</option>
-              <option value="Sofás">Sofás</option>
-              <option value="Mesas de centro">Mesas de centro</option>
-              <option value="Libreros">Libreros</option>
-              <option value="Centros de entretenimiento">Centros de entretenimiento</option>
-              <option value="Comedores">Comedores</option>
-              <option value="Cocinas Integrales">Cocinas Integrales</option>
-              <option value="Alacenas">Alacenas</option>
+            Categoría
+            <select name="fk_categoria" required>
+              <option value="">--</option>
+              {categorias.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
             </select>
           </label>
-
           <label>
-            Imagen del Producto:
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setImagen(e.target.files[0])}
-              required
-            />
+            Modelo
+            <select name="fk_modelo" required>
+              <option value="">--</option>
+              {modelos.map(m => <option key={m.id} value={m.id}>{m.modelo}</option>)}
+            </select>
           </label>
-
-          <button type="submit">Agregar al catálogo</button>
+          <label>Imagen<input name="imagen" type="file" accept="image/*" required /></label>
+          <button type="submit">Guardar Producto</button>
         </form>
       </div>
     </div>
   );
-};
-
-export default AgregarProducto;
+}

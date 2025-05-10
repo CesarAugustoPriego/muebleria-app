@@ -20,9 +20,9 @@ import CarritoPage from './pages/CarritoPage';
 import AgregarProducto from './adminPages/AgregarProducto';
 import DashboardAdmin from './adminPages/DashboardAdmin';
 import MisComprasPage from './pages/MisComprasPage';
+import ProductosAdmin from './adminPages/ProductosAdmin';
 
 import PrivateRoute from './routes/PrivateRoute'; // 👈 asegúrate de tener este archivo creado
-
 function App() {
   return (
     <Router>
@@ -30,11 +30,11 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/registro" element={<RegistroPage />} />
         <Route path="/" element={<HomePage />} />
-        <Route path="/catalogo" element={<CatalogPage />} /> 
+        <Route path="/catalogo" element={<CatalogPage />} />
         <Route path="/sala" element={<Sala />} />
-        <Route path="/camas" element={<CamasPage />} /> 
-        <Route path="/literas" element={<LiterasPage />} /> 
-        <Route path="/escritorios" element={<EscritoriosPage />} /> 
+        <Route path="/camas" element={<CamasPage />} />
+        <Route path="/literas" element={<LiterasPage />} />
+        <Route path="/escritorios" element={<EscritoriosPage />} />
         <Route path="/armarios" element={<ArmariosPage />} />
         <Route path="/tocadores" element={<TocadoresPage />} />
         <Route path="/sofas" element={<SofasPage />} />
@@ -47,14 +47,17 @@ function App() {
         <Route path="/carrito" element={<CarritoPage />} />
         <Route path="/mis-compras" element={<MisComprasPage />} />
 
-        {/* 🔐 RUTAS PROTEGIDAS PARA ADMIN */}
         <Route element={<PrivateRoute allowedRoles={['admin']} />}>
           <Route path="/admin/agregar-producto" element={<AgregarProducto />} />
           <Route path="/admin/dashboard" element={<DashboardAdmin />} />
+          <Route path="/admin/productos" element={<ProductosAdmin />} />
         </Route>
       </Routes>
+
+  
     </Router>
   );
 }
+
 
 export default App;

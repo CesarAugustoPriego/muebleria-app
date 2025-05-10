@@ -140,3 +140,17 @@
     background-color: #218838;
   }
   
+.ver-productos-btn {
+  margin-left: 10px;
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  background-color: #17a2b8;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.ver-productos-btn:hover {
+  background-color: #138496;
+}
