@@ -13,7 +13,7 @@ export default function LoginPage() {
     const password = form.password.value;
 
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await fetch('/api/auth/login', { // 🔧 URL corregida
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ user, password }),
@@ -22,7 +22,7 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.msg || 'Error desconocido');
+        setError(data.msg || 'Error desconocido'); // 🔴 Captura mensaje del backend
         return;
       }
 
@@ -45,7 +45,7 @@ export default function LoginPage() {
 
   return (
     <>
-      <Login onSubmit={handleLogin} />
+      <Login onSubmit={handleLogin} error={error} />
       {error && (
         <div style={{ color: 'red', textAlign: 'center', marginTop: '1rem' }}>
           {error}

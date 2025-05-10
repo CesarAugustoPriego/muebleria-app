@@ -98,3 +98,24 @@
   text-decoration: underline;
 }
 
+.input-error {
+  color: red;
+  font-size: 0.85rem;
+  margin: 0.25rem 0 0.5rem 0;
+  display: block;
+}
+
+.password-field {
+  position: relative;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  background: none;
+  border: none;
+  color: #f60;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
