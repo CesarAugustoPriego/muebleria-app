@@ -1,75 +1,114 @@
 .agregar-producto-page {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f9f9f9;
-    min-height: 100vh;
-    padding: 40px 20px;
-  }
-  
-  .agregar-producto-page .form-container {
-    max-width: 500px;
-    margin: 0 auto;
-    background-color: #ffffff;
-    padding: 30px 40px;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  }
-  
-  .agregar-producto-page .form-container h2 {
-    text-align: center;
-    margin-bottom: 25px;
-    font-size: 2rem;
-    color: #333;
-  }
-  
-  .agregar-producto-page form {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-  }
-  
-  .agregar-producto-page label {
-    display: flex;
-    flex-direction: column;
-    font-weight: 600;
-    font-size: 1rem;
-    color: #444;
-  }
-  
-  .agregar-producto-page input[type="text"],
-  .agregar-producto-page input[type="file"],
-  .agregar-producto-page select {
-    margin-top: 6px;
-    padding: 10px 12px;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    transition: border-color 0.3s ease;
-  }
-  
-  .agregar-producto-page input[type="text"]:focus,
-  .agregar-producto-page select:focus {
-    border-color: #28a745;
-    outline: none;
-  }
-  
-  .agregar-producto-page input[type="file"] {
-    padding: 8px;
-    background-color: #f2f2f2;
-    cursor: pointer;
-  }
-  
-  .agregar-producto-page button[type="submit"] {
-    background-color: #28a745;
-    color: white;
-    padding: 12px 20px;
-    font-size: 1rem;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .agregar-producto-page button[type="submit"]:hover {
-    background-color: #218838;
-  }
-  
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+.agregar-producto-page .form-container {
+  max-width: 500px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.agregar-producto-page .form-container h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 2rem;
+  color: #333;
+}
+
+.agregar-producto-page form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.agregar-producto-page label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #444;
+}
+
+/* ===== controles full-width uniformes ===== */
+.agregar-producto-page form input,
+.agregar-producto-page form select,
+.agregar-producto-page form textarea,
+.agregar-producto-page form button {
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 6px;
+}
+
+/* inputs y selects (texto y número) */
+.agregar-producto-page form input[type="text"],
+.agregar-producto-page form input[type="number"],
+.agregar-producto-page form select {
+  height: 45px;
+  padding: 12px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  transition: border-color 0.3s ease;
+}
+
+/* textarea */
+.agregar-producto-page form textarea {
+  min-height: 80px;
+  padding: 12px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  transition: border-color 0.3s ease;
+}
+
+/* focus para inputs, selects y textarea */
+.agregar-producto-page form input:focus,
+.agregar-producto-page form select:focus,
+.agregar-producto-page form textarea:focus {
+  border-color: #28a745;
+  outline: none;
+}
+
+/* file-picker */
+.agregar-producto-page form input[type="file"] {
+  padding: 8px;
+  background-color: #f2f2f2;
+  cursor: pointer;
+}
+
+/* botón submit */
+.agregar-producto-page form button[type="submit"] {
+  background-color: #28a745;
+  color: white;
+  padding: 12px;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 12px;
+}
+
+/* hover del botón */
+.agregar-producto-page form button[type="submit"]:hover {
+  background-color: #218838;
+}
+
+/* vista previa de imagen */
+.preview-container {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.preview-image {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}

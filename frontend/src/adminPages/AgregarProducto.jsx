@@ -3,13 +3,52 @@ import './AgregarProducto.css';
 import Navbar from '../components/Auth/Navbar';
 
 export default function AgregarProducto() {
-  const [categorias, setCategorias] = useState([]);
-  const [modelos, setModelos]       = useState([]);
+  const [categorias, setCategorias]             = useState([]);
+  const [todosModelos, setTodosModelos]         = useState([]);
+  const [modelosFiltrados, setModelosFiltrados] = useState([]);
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('');
+  const [modeloSeleccionado, setModeloSeleccionado]       = useState('');
+  const [preview, setPreview]                   = useState(null);
 
+  // Carga inicial de categorías y modelos
   useEffect(() => {
-    fetch('/api/categorias').then(r => r.json()).then(setCategorias);
-    fetch('/api/modelos').then(r => r.json()).then(setModelos);
+    fetch('/api/categorias')
+      .then(r => r.json())
+      .then(setCategorias)
+      .catch(console.error);
+
+    fetch('/api/modelos')
+      .then(r => r.json())
+      .then(setTodosModelos)
+      .catch(console.error);
   }, []);
+
+  // Filtra los modelos cuando cambia la categoría
+  useEffect(() => {
+    if (!categoriaSeleccionada) {
+      setModelosFiltrados([]);
+      setModeloSeleccionado('');
+      return;
+    }
+    const filtrados = todosModelos.filter(
+      m => String(m.fk_categoria) === categoriaSeleccionada
+    );
+    setModelosFiltrados(filtrados);
+    setModeloSeleccionado('');
+  }, [categoriaSeleccionada, todosModelos]);
+
+  const handleCategoriaChange = e => {
+    setCategoriaSeleccionada(e.target.value);
+  };
+
+  const handleModeloChange = e => {
+    setModeloSeleccionado(e.target.value);
+  };
+
+  const handleImageChange = e => {
+    const file = e.target.files[0];
+    if (file) setPreview(URL.createObjectURL(file));
+  };
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -19,16 +58,20 @@ export default function AgregarProducto() {
     fd.append('descripcion', form.descripcion.value);
     fd.append('precio', form.precio.value);
     fd.append('existencia', form.existencia.value);
-    fd.append('fk_categoria', form.fk_categoria.value);
-    fd.append('fk_modelo', form.fk_modelo.value);
+    fd.append('fk_categoria', categoriaSeleccionada);
+    fd.append('fk_modelo', modeloSeleccionado);
     fd.append('imagen', form.imagen.files[0]);
 
     const res = await fetch('/api/productos', { method: 'POST', body: fd });
     if (res.ok) {
-      alert('✅ Agregado');
+      alert('✅ Producto agregado');
       form.reset();
+      setPreview(null);
+      setCategoriaSeleccionada('');
+      setModelosFiltrados([]);
+      setModeloSeleccionado('');
     } else {
-      alert('❌ Error');
+      alert('❌ Error al guardar');
     }
   };
 
@@ -38,25 +81,84 @@ export default function AgregarProducto() {
       <div className="form-container">
         <h2>Agregar Producto</h2>
         <form onSubmit={handleSubmit}>
-          <label>Nombre<input name="nombre" required /></label>
-          <label>Descripción<textarea name="descripcion" required /></label>
-          <label>Precio<input name="precio" type="number" step="0.01" required /></label>
-          <label>Stock<input name="existencia" type="number" required /></label>
+          <label>
+            Nombre
+            <input type="text" name="nombre" required />
+          </label>
+
+          <label>
+            Descripción
+            <textarea name="descripcion" required />
+          </label>
+
+          <label>
+            Precio
+            <input type="number" name="precio" step="0.01" required />
+          </label>
+
+          <label>
+            Stock
+            <input type="number" name="existencia" required />
+          </label>
+
           <label>
             Categoría
-            <select name="fk_categoria" required>
-              <option value="">--</option>
-              {categorias.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
+            <select
+              name="fk_categoria"
+              value={categoriaSeleccionada}
+              onChange={handleCategoriaChange}
+              required
+            >
+              <option value="" disabled>-- Selecciona categoría --</option>
+              {categorias.map(c => (
+                <option key={c.id} value={c.id}>
+                  {c.nombre}
+                </option>
+              ))}
             </select>
           </label>
+
           <label>
             Modelo
-            <select name="fk_modelo" required>
-              <option value="">--</option>
-              {modelos.map(m => <option key={m.id} value={m.id}>{m.modelo}</option>)}
+            <select
+              name="fk_modelo"
+              value={modeloSeleccionado}
+              onChange={handleModeloChange}
+              disabled={!modelosFiltrados.length}
+              required
+            >
+              <option value="" disabled>
+                {!categoriaSeleccionada
+                  ? '-- Primero elige categoría --'
+                  : modelosFiltrados.length
+                  ? '-- Selecciona modelo --'
+                  : '-- Sin modelos disponibles --'}
+              </option>
+              {modelosFiltrados.map(m => (
+                <option key={m.id} value={m.id}>
+                  {m.modelo}
+                </option>
+              ))}
             </select>
           </label>
-          <label>Imagen<input name="imagen" type="file" accept="image/*" required /></label>
+
+          <label>
+            Imagen
+            <input
+              type="file"
+              name="imagen"
+              accept="image/*"
+              required
+              onChange={handleImageChange}
+            />
+          </label>
+
+          {preview && (
+            <div className="preview-container">
+              <img src={preview} alt="Vista previa" className="preview-image" />
+            </div>
+          )}
+
           <button type="submit">Guardar Producto</button>
         </form>
       </div>

@@ -22,6 +22,7 @@ import DashboardAdmin from './adminPages/DashboardAdmin';
 import MisComprasPage from './pages/MisComprasPage';
 import ProductosAdmin from './adminPages/ProductosAdmin';
 
+
 import PrivateRoute from './routes/PrivateRoute'; // 👈 asegúrate de tener este archivo creado
 function App() {
   return (
