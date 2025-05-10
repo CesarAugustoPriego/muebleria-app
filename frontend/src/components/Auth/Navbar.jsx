@@ -4,57 +4,44 @@ import './Navbar.css';
 import logo from '../../assets/img/Logo.png';
 
 const Navbar = () => {
-  const [navOpen, setNavOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const isLoggedIn = Boolean(localStorage.getItem('token'));
 
-  const isHome = location.pathname === '/';
-  const isLoggedIn = !!localStorage.getItem('token');
+  const toggleMenu = () => setOpen(o => !o);
+  const closeMenu  = () => setOpen(false);
 
-  const toggleNav = () => setNavOpen(o => !o);
-  const cerrarMenu = () => setNavOpen(false);
-
-  const cerrarSesion = () => {
+  const handleLogout = () => {
     localStorage.clear();
     navigate('/login');
+    closeMenu();
   };
 
   return (
-    <div className={`navbar-container ${navOpen ? 'with-nav-open' : ''}`}>
-      <div className="navbar-left">
-        <div className="hamburger" onClick={toggleNav}>
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
+    <header className="navbar">
+      <div className="navbar__brand">
+        <img src={logo} alt="Logo" className="navbar__logo" onClick={closeMenu}/>
       </div>
 
-      <nav className={`offcanvas-nav ${navOpen ? 'open' : ''}`}>
-        <ul>
-          <li><Link to="/" onClick={cerrarMenu}>Inicio</Link></li>
-          <li><Link to="/catalogo" onClick={cerrarMenu}>Catálogo</Link></li>
-          {isHome && (
-            <>
-              <li><a href="#tipos" onClick={cerrarMenu}>Tipos</a></li>
-              <li><a href="#productos" onClick={cerrarMenu}>Productos destacados</a></li>
-              <li><a href="#testimonios" onClick={cerrarMenu}>Testimonios</a></li>
-              <li><a href="#contacto" onClick={cerrarMenu}>Contacto</a></li>
-            </>
-          )}
-          <li><Link to="/carrito" onClick={cerrarMenu}>🛒 Carrito</Link></li>
-          <li><Link to="/mis-compras" onClick={cerrarMenu}>🧾 Mis Compras</Link></li>
-          {isLoggedIn && (
-            <li>
-              <button onClick={cerrarSesion} className="cerrar-sesion-btn">Cerrar Sesión</button>
-            </li>
-          )}
-        </ul>
+      <nav className={`navbar__links ${open ? 'open' : ''}`}>
+        <Link to="/"          onClick={closeMenu} className={location.pathname==='/' ? 'active' : ''}>Inicio</Link>
+        <Link to="/catalogo"  onClick={closeMenu} className={location.pathname.startsWith('/catalogo') ? 'active' : ''}>Catálogo</Link>
+        <Link to="/carrito"   onClick={closeMenu} className={location.pathname==='/carrito' ? 'active' : ''}>🛒 Carrito</Link>
+        <Link to="/mis-compras" onClick={closeMenu} className={location.pathname==='/mis-compras' ? 'active' : ''}>🧾 Mis Compras</Link>
+        {isLoggedIn && (
+          <button onClick={handleLogout} className="navbar__logout">
+            Cerrar Sesión
+          </button>
+        )}
       </nav>
 
-      <div className="navbar-right">
-        <img src={logo} alt="Logo" className="navbar-logo" onClick={() => cerrarMenu()} />
-      </div>
-    </div>
+      <button className={`navbar__hamburger ${open ? 'open' : ''}`} onClick={toggleMenu}>
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </header>
   );
 };
 
