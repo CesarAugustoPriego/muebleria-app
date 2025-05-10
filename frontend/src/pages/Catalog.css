@@ -1,60 +1,73 @@
-/* Catalog.css */
-.catalog-header {
+/* Contenedor general */
+.catalog-page {
   display: flex;
-  flex-direction: column; /* Centra los elementos de arriba a abajo */
-  justify-content: center; /* Centra el contenido verticalmente */
-  align-items: center; /* Centra el contenido horizontalmente */
-  padding: 80px 20px 40px 20px; /* Ajusta el padding para que el texto no quede muy pegado */
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Hero */
+.catalog-header {
+  width: 100%;
+  height: 300px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  margin-bottom: 1rem;
+}
+.catalog-header-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   text-align: center;
-  color: white;
-  width: 100%; /* Asegura que el encabezado ocupe todo el ancho de la página */
-  height: 400px; /* Ajusta la altura según lo que necesites */
-  background-size: cover; /* Hace que la imagen de fondo cubra todo el encabezado */
-  background-position: center; /* Centra la imagen de fondo */
-  background-repeat: no-repeat; /* Evita que la imagen se repita */
-  position: relative; /* Para alinear correctamente el contenido */
-  margin: 0; /* Elimina cualquier margen extra */
+  color: #fff;
 }
+.catalog-header-content h1 { font-size: 2.5rem; margin: 0.5rem 0; }
+.catalog-header-content p  { font-size: 1.2rem; }
 
-.catalog-header-content h1 {
-  font-size: 2.5rem;
-  margin-bottom: 10px;
+/* Grid de secciones */
+.catalog-container {
+  max-width: 1200px;
+  width: 100%;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  padding: 0 1rem 2rem;
 }
-
-.catalog-header-content p {
-  font-size: 1.2rem;
-  margin-top: 10px;
-}
-
 .catalog-section {
-  margin: 20px 0;
-}
-
-.category {
-  background-color: #e6e6e6;
-  padding: 15px;
+  background: #f4f4f4;
   border-radius: 8px;
-  margin-bottom: 10px;
+  overflow: hidden;
+  transition: all 0.3s;
 }
-
-.category h2 {
-  font-size: 1.5rem;
-  margin-bottom: 10px;
-  color: #e28708;
+.catalog-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  cursor: pointer;
 }
+.catalog-section-header h2 { color: #e28708; margin: 0; font-size: 1.5rem; }
+.accordion-icon { font-size: 1.5rem; }
 
-.subcategory {
-  margin-top: 10px;
+.subcategory-list {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .3s;
+  padding: 0 1rem;
+  margin: 0;
 }
-
-.subcategory a {
-  display: block;
+.catalog-section.open .subcategory-list {
+  max-height: 500px;
+  margin: 1rem 0;
+}
+.subcategory-list li { list-style: none; margin: 0.5rem 0; }
+.subcategory-list li a {
+  text-decoration: none;
   color: #333;
   font-size: 1.1rem;
-  text-decoration: none;
-  margin-bottom: 8px;
 }
-
-.subcategory a:hover {
+.subcategory-list li a:hover {
+  color: #e28708;
   text-decoration: underline;
 }
