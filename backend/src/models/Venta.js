@@ -16,10 +16,14 @@ const Venta = sequelize.define('Venta', {
     type: DataTypes.INTEGER, allowNull: true
   },
   fecha: {
-    type: DataTypes.DATE, allowNull: false
+    type: DataTypes.DATE,
+    allowNull: false,
+    defaultValue: DataTypes.NOW    // ← valor por defecto
   },
   tipo_venta: {
-    type: DataTypes.ENUM('de contado','venta a pagos'), allowNull: false, defaultValue: 'de contado'
+    type: DataTypes.ENUM('de contado','venta a pagos'),
+    allowNull: false,
+    defaultValue: 'de contado'
   },
   total: {
     type: DataTypes.DECIMAL(10,2), allowNull: false

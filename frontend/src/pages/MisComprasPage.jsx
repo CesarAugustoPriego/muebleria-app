@@ -4,8 +4,9 @@ import Navbar from '../components/Auth/Navbar';
 import './MisComprasPage.css';
 
 export default function MisComprasPage() {
-  const [ventas, setVentas] = useState([]);
+  const [ventas, setVentas]   = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError]     = useState('');
   const token = localStorage.getItem('token');
   const API   = 'http://localhost:4000/api';
 
@@ -17,9 +18,14 @@ export default function MisComprasPage() {
         });
         if (!res.ok) throw new Error('Error al cargar tus compras');
         const data = await res.json();
-        setVentas(data);
+        // Si el back responde { ventas: [...] } descomenta esta línea:
+        // const arr = Array.isArray(data.ventas) ? data.ventas : [];
+        // Si el back responde directamente [...] déjala así:
+        const arr = Array.isArray(data) ? data : (Array.isArray(data.ventas) ? data.ventas : []);
+        setVentas(arr);
       } catch (e) {
         console.error(e);
+        setError(e.message);
       } finally {
         setLoading(false);
       }
@@ -27,8 +33,27 @@ export default function MisComprasPage() {
     fetchVentas();
   }, [token]);
 
-  if (loading) return <p>Cargando mis compras…</p>;
+  // 1) Mientras carga
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <p>Cargando mis compras…</p>
+      </>
+    );
+  }
 
+  // 2) Si dio error
+  if (error) {
+    return (
+      <>
+        <Navbar />
+        <p style={{ color: 'red' }}>❌ {error}</p>
+      </>
+    );
+  }
+
+  // 3) Ya tenemos el array (aunque esté vacío)
   return (
     <>
       <Navbar />
@@ -48,7 +73,7 @@ export default function MisComprasPage() {
                 <strong>Estado del Pedido:</strong> {compra.estado}
               </p>
               <div className="productos">
-                {compra.detalles.map(det => (
+                { (compra.detalles || []).map(det => (
                   <div key={det.id} className="producto">
                     <img
                       src={`http://localhost:4000${det.producto.imagen_url}`}
@@ -61,7 +86,7 @@ export default function MisComprasPage() {
                       </p>
                     </div>
                   </div>
-                ))}
+                )) }
               </div>
               <p className="total">
                 Total: ${compra.total.toLocaleString()} MXN
