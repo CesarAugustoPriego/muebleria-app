@@ -1,62 +1,75 @@
-import React from 'react';
+// src/pages/MisComprasPage.jsx
+import React, { useEffect, useState } from 'react';
 import Navbar from '../components/Auth/Navbar';
-import cama1 from '../assets/img/cama1.jpg';  // Usamos la misma imagen del carrito
-import centro1 from '../assets/img/centro1.jpg';  // Usamos la misma imagen del carrito
 import './MisComprasPage.css';
 
-const comprasEjemplo = [
-  {
-    id: 1,
-    fecha: '2025-05-03',
-    total: 7798,
-    estado: 'Enviado',  // Estado del pedido
-    productos: [
-      { nombre: 'Cama Individual Moderna', cantidad: 1, precio: 4499, imagen: cama1 },
-      { nombre: 'Centro de Entretenimiento', cantidad: 1, precio: 3299, imagen: centro1 },
-    ],
-  },
-  {
-    id: 2,
-    fecha: '2025-04-25',
-    total: 3299,
-    estado: 'En Proceso',
-    productos: [
-      { nombre: 'Centro de Entretenimiento', cantidad: 1, precio: 3299, imagen: centro1 },
-    ],
-  },
-];
+export default function MisComprasPage() {
+  const [ventas, setVentas] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const token = localStorage.getItem('token');
+  const API   = 'http://localhost:4000/api';
 
-const MisComprasPage = () => {
+  useEffect(() => {
+    const fetchVentas = async () => {
+      try {
+        const res = await fetch(`${API}/ventas`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error('Error al cargar tus compras');
+        const data = await res.json();
+        setVentas(data);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchVentas();
+  }, [token]);
+
+  if (loading) return <p>Cargando mis compras…</p>;
+
   return (
     <>
       <Navbar />
       <div className="mis-compras-container">
         <h2>📦 Mis Compras</h2>
-        {comprasEjemplo.length === 0 ? (
+
+        {ventas.length === 0 ? (
           <p>No tienes compras registradas.</p>
         ) : (
-          comprasEjemplo.map((compra) => (
+          ventas.map(compra => (
             <div key={compra.id} className="compra-card">
-              <h3>Compra #{compra.id} - {compra.fecha}</h3>
-              <p><strong>Estado del Pedido:</strong> {compra.estado}</p>
+              <h3>
+                Compra #{compra.id} –{' '}
+                {new Date(compra.fecha).toLocaleDateString()}
+              </h3>
+              <p>
+                <strong>Estado del Pedido:</strong> {compra.estado}
+              </p>
               <div className="productos">
-                {compra.productos.map((prod, i) => (
-                  <div key={i} className="producto">
-                    <img src={prod.imagen} alt={prod.nombre} />
+                {compra.detalles.map(det => (
+                  <div key={det.id} className="producto">
+                    <img
+                      src={`http://localhost:4000${det.producto.imagen_url}`}
+                      alt={det.producto.nombre}
+                    />
                     <div className="producto-info">
-                      <h4>{prod.nombre}</h4>
-                      <p>{prod.cantidad} x ${prod.precio.toLocaleString()} MXN</p>
+                      <h4>{det.producto.nombre}</h4>
+                      <p>
+                        {det.cantidad} × ${det.precio_total.toLocaleString()} MXN
+                      </p>
                     </div>
                   </div>
                 ))}
               </div>
-              <p className="total">Total: ${compra.total.toLocaleString()} MXN</p>
+              <p className="total">
+                Total: ${compra.total.toLocaleString()} MXN
+              </p>
             </div>
           ))
         )}
       </div>
     </>
   );
-};
-
-export default MisComprasPage;
+}

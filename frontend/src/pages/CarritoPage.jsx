@@ -1,44 +1,102 @@
 // src/pages/CarritoPage.jsx
-import React, { useEffect, useState } from 'react';
-import Navbar from '../components/Auth/Navbar';
-import './CarritoPage.css';
+import React, { useEffect, useState } from 'react'
+import Navbar from '../components/Auth/Navbar'
+import './CarritoPage.css'
 
 export default function CarritoPage() {
-  const [carrito, setCarrito] = useState(null);
+  const [carrito, setCarrito] = useState(null)
 
-  // Estado para Dirección
+  // 1) DIRECCIONES
+  const [direcciones, setDirecciones] = useState([])
   const [direccion, setDireccion] = useState({
-    nombre: '', calle: '', ciudad: '', estado: '', cp: '', telefono: ''
-  });
-  const [direccionGuardada, setDireccionGuardada] = useState(false);
-  const [mensajeDireccion, setMensajeDireccion] = useState('');
+    nombre: '', calle: '', ciudad: '', estado: '', cp: '', telefono: '', referencia: ''
+  })
+  const [direccionGuardada, setDireccionGuardada] = useState(false)
+  const [mensajeDireccion, setMensajeDireccion] = useState('')
 
-  // Estado para Método de Pago
-  const [metodoPago, setMetodoPago] = useState('');
+  // 2) MÉTODOS DE PAGO
+  const [metodos, setMetodos] = useState([])
+  const [metodoPago, setMetodoPago] = useState('')
   const [detallesPago, setDetallesPago] = useState({
     numero: '', expiracion: '', cvv: '', email: ''
-  });
-  const [pagoGuardado, setPagoGuardado] = useState(false);
-  const [mensajePago, setMensajePago] = useState('');
+  })
+  const [pagoGuardado, setPagoGuardado] = useState(false)
+  const [mensajePago, setMensajePago] = useState('')
 
-  const [mensajeFinal, setMensajeFinal] = useState('');
-  const token = localStorage.getItem('token');
-  const API   = 'http://localhost:4000/api';
+  // 3) ESTADO GENERAL
+  const [mensajeFinal, setMensajeFinal] = useState('')
+  const token = localStorage.getItem('token')
+  const API = 'http://localhost:4000/api'
 
-  // 1) Cargar carrito
-  const cargar = () => {
+  // Al montar, traemos: carrito, direcciones y métodos
+  useEffect(() => {
+    // 3.1) carrito
     fetch(`${API}/carrito`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(r => r.json())
       .then(setCarrito)
-      .catch(console.error);
-  };
-  useEffect(cargar, []);
+      .catch(console.error)
 
-  if (!carrito) return <p>Cargando carrito…</p>;
+    // 3.2) direcciones
+    fetch(`${API}/direcciones`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(r => r.json())
+      .then(dirs => {
+        setDirecciones(dirs || [])
+        if (dirs.length) {
+          const d = dirs[0] // usamos la primera como “activa”
+          setDireccion({
+            nombre:    d.nombre_recibe,
+            calle:     d.calle,
+            ciudad:    d.ciudad,
+            estado:    d.estado,
+            cp:        d.cp,
+            telefono:  d.telefono,
+            referencia:d.referencia || ''
+          })
+          setDireccionGuardada(true)
+          setMensajeDireccion('📦 Dirección cargada del servidor.')
+        }
+      })
+      .catch(console.error)
 
-  // 2) Actualizar o eliminar ítem
+    // 3.3) métodos de pago
+    fetch(`${API}/metodos`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(r => r.json())
+      .then(mps => {
+        setMetodos(mps || [])
+        if (mps.length) {
+          const m = mps[0]
+          setMetodoPago(m.tipo === 'transferencia' ? 'paypal' : m.tipo)
+          if (m.tipo === 'tarjeta') {
+            setDetallesPago({
+              numero:     m.titular || '',
+              expiracion: '',
+              cvv:        '',
+              email:      ''
+            })
+          } else if (m.tipo === 'transferencia') {
+            setDetallesPago({
+              numero:     '',
+              expiracion: '',
+              cvv:        '',
+              email:      m.titular || ''
+            })
+          }
+          setPagoGuardado(true)
+          setMensajePago('💳 Método de pago cargado del servidor.')
+        }
+      })
+      .catch(console.error)
+  }, [])
+
+  if (!carrito) return <p>Cargando carrito…</p>
+
+  // — Carrito: cantidad/eliminar
   const cambiarCantidad = (id, qty) => {
     fetch(`${API}/carrito/detalle/${id}`, {
       method: 'PUT',
@@ -47,21 +105,24 @@ export default function CarritoPage() {
         Authorization: `Bearer ${token}`
       },
       body: JSON.stringify({ cantidad: qty })
-    }).then(cargar).catch(console.error);
-  };
-  const eliminarItem = id => cambiarCantidad(id, 0);
+    })
+      .then(() => fetch(`${API}/carrito`, { headers: { Authorization: `Bearer ${token}` } })
+        .then(r => r.json()).then(setCarrito)
+      )
+      .catch(console.error)
+  }
+  const eliminarItem = id => cambiarCantidad(id, 0)
 
-  // 3) Total
+  // — Cálculo de total
   const total = carrito.detalles.reduce(
     (sum, d) => sum + d.producto.precio_unitario * d.cantidad,
     0
-  );
+  )
 
-  // 4) Guardar dirección en el servidor
+  // — Guardar o actualizar Dirección
   const guardarDireccion = async () => {
     if (!direccion.nombre || !direccion.calle || !direccion.ciudad || !direccion.cp) {
-      alert('Por favor completa nombre, calle, ciudad y código postal.');
-      return;
+      return alert('Completa nombre, calle, ciudad y código postal.')
     }
     try {
       const res = await fetch(`${API}/direcciones`, {
@@ -76,44 +137,38 @@ export default function CarritoPage() {
           ciudad:        direccion.ciudad,
           estado:        direccion.estado,
           cp:            direccion.cp,
-          telefono:      direccion.telefono
+          telefono:      direccion.telefono,
+          referencia:    direccion.referencia
         })
-      });
-      const body = await res.json();
-      if (!res.ok) throw new Error(body.msg || 'Error guardando dirección');
-      setDireccionGuardada(true);
-      setMensajeDireccion('📦 Dirección guardada en el servidor.');
+      })
+      const body = await res.json()
+      if (!res.ok) throw new Error(body.msg || 'Error guardando dirección')
+      setDireccionGuardada(true)
+      setMensajeDireccion('📦 Dirección guardada en el servidor.')
     } catch (e) {
-      alert('❌ ' + e.message);
+      alert('❌ ' + e.message)
     }
-  };
+  }
 
-  // 5) Guardar método de pago en el servidor
+  // — Guardar o actualizar Método de Pago
   const guardarMetodoPago = async () => {
-    if (metodoPago === '') {
-      alert('Selecciona un método de pago.');
-      return;
-    }
-    // Prepara payload
-    let payload = { tipo: metodoPago };
+    if (!metodoPago) return alert('Selecciona un método de pago.')
+    const payload = { tipo: metodoPago === 'paypal' ? 'transferencia' : metodoPago }
     if (metodoPago === 'tarjeta') {
-      const { numero, expiracion, cvv } = detallesPago;
+      const { numero, expiracion, cvv } = detallesPago
       if (!numero || !expiracion || !cvv) {
-        alert('Completa los datos de la tarjeta.');
-        return;
+        return alert('Completa los datos de la tarjeta.')
       }
-      payload.token_last4 = numero.slice(-4);
-      payload.titular     = numero; 
+      payload.token_last4 = numero.slice(-4)
+      payload.titular     = numero
     }
     if (metodoPago === 'paypal') {
       if (!detallesPago.email) {
-        alert('Introduce tu correo de PayPal.');
-        return;
+        return alert('Introduce tu correo de PayPal.')
       }
-      payload.tipo        = 'transferencia'; // mapea PayPal a “transferencia”
-      payload.titular     = detallesPago.email;
+      payload.titular = detallesPago.email
     }
-    // efectivo no necesita datos extra
+    // efectivo no requiere datos
 
     try {
       const res = await fetch(`${API}/metodos`, {
@@ -123,33 +178,32 @@ export default function CarritoPage() {
           Authorization: `Bearer ${token}`
         },
         body: JSON.stringify(payload)
-      });
-      const body = await res.json();
-      if (!res.ok) throw new Error(body.msg || 'Error guardando método');
-      setPagoGuardado(true);
-      setMensajePago('💳 Método de pago guardado en el servidor.');
+      })
+      const body = await res.json()
+      if (!res.ok) throw new Error(body.msg || 'Error guardando método')
+      setPagoGuardado(true)
+      setMensajePago('💳 Método de pago guardado en el servidor.')
     } catch (e) {
-      alert('❌ ' + e.message);
+      alert('❌ ' + e.message)
     }
-  };
+  }
 
-  // 6) Procesar pago (checkout)
+  // — Checkout final
   const manejarPago = async () => {
     if (!direccionGuardada || !pagoGuardado) {
-      alert('Guarda tu dirección y método de pago antes de continuar.');
-      return;
+      return alert('Guarda dirección y método de pago primero.')
     }
     try {
       const res = await fetch(`${API}/carrito/checkout`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` }
-      });
-      if (!res.ok) throw new Error('Error en checkout');
-      setMensajeFinal('✅ Tu compra se ha procesado correctamente.');
+      })
+      if (!res.ok) throw new Error('Error en checkout')
+      setMensajeFinal('✅ Tu compra se ha procesado correctamente.')
     } catch (e) {
-      alert('❌ ' + e.message);
+      alert('❌ ' + e.message)
     }
-  };
+  }
 
   return (
     <>
@@ -161,6 +215,7 @@ export default function CarritoPage() {
           <p>Tu carrito está vacío.</p>
         ) : (
           <>
+            {/* Items */}
             <div className="carrito-items">
               {carrito.detalles.map(d => (
                 <div key={d.id} className="carrito-item">
@@ -188,86 +243,88 @@ export default function CarritoPage() {
               ))}
             </div>
 
-            {/* === Dirección de envío === */}
+            {/* Dirección */}
             <div className="direccion-section">
               <h3>📦 Dirección de envío</h3>
               <input
-                type="text"
-                placeholder="Nombre completo"
+                type="text" placeholder="Nombre completo"
                 value={direccion.nombre}
                 onChange={e => setDireccion({ ...direccion, nombre: e.target.value })}
               />
               <input
-                type="text"
-                placeholder="Calle"
+                type="text" placeholder="Calle"
                 value={direccion.calle}
                 onChange={e => setDireccion({ ...direccion, calle: e.target.value })}
               />
               <input
-                type="text"
-                placeholder="Ciudad"
+                type="text" placeholder="Ciudad"
                 value={direccion.ciudad}
                 onChange={e => setDireccion({ ...direccion, ciudad: e.target.value })}
               />
               <input
-                type="text"
-                placeholder="Estado"
+                type="text" placeholder="Estado"
                 value={direccion.estado}
                 onChange={e => setDireccion({ ...direccion, estado: e.target.value })}
               />
               <input
-                type="text"
-                placeholder="Código postal"
+                type="text" placeholder="Código postal"
                 value={direccion.cp}
                 onChange={e => setDireccion({ ...direccion, cp: e.target.value })}
               />
               <input
-                type="tel"
-                placeholder="Teléfono"
+                type="tel" placeholder="Teléfono"
                 value={direccion.telefono}
                 onChange={e => setDireccion({ ...direccion, telefono: e.target.value })}
+              />
+              <input
+                type="text" placeholder="Referencia (opcional)"
+                value={direccion.referencia}
+                onChange={e => setDireccion({ ...direccion, referencia: e.target.value })}
               />
               <button className="guardar-btn" onClick={guardarDireccion}>
                 Guardar dirección
               </button>
-              {mensajeDireccion && (
-                <p className="mensaje-confirmacion">{mensajeDireccion}</p>
-              )}
+              {mensajeDireccion && <p className="mensaje-confirmacion">{mensajeDireccion}</p>}
             </div>
 
-            {/* === Método de Pago === */}
+            {/* Método de pago */}
             <div className="metodo-pago-section">
               <h3>💳 Método de pago</h3>
               <select
                 value={metodoPago}
                 onChange={e => {
-                  setMetodoPago(e.target.value);
-                  setDetallesPago({ numero:'', expiracion:'', cvv:'', email:'' });
+                  setMetodoPago(e.target.value)
+                  setDetallesPago({ numero:'', expiracion:'', cvv:'', email:'' })
                 }}
               >
                 <option value="">Selecciona un método</option>
-                <option value="tarjeta">Tarjeta de Crédito/Débito</option>
-                <option value="paypal">PayPal</option>
-                <option value="efectivo">Efectivo</option>
+                {metodos.map(m =>
+                  <option key={m.id} value={ m.tipo==='transferencia'?'paypal':m.tipo }>
+                    { m.tipo === 'tarjeta'
+                        ? `Tarjeta ••••${m.token_last4}`
+                        : m.tipo === 'transferencia'
+                          ? `PayPal (${m.titular})`
+                          : 'Efectivo (Pago al recibir)'
+                    }
+                  </option>
+                )}
+                <option value="nuevo">+ Agregar nuevo método</option>
               </select>
 
-              {metodoPago === 'tarjeta' && (
+              {metodoPago === 'tarjeta' || metodoPago === 'nuevo' && (
                 <>
                   <input
-                    type="text"
-                    placeholder="Número de tarjeta (16 dígitos)"
+                    type="text" placeholder="Número de tarjeta"
                     value={detallesPago.numero}
                     onChange={e => setDetallesPago({ ...detallesPago, numero: e.target.value })}
                   />
                   <input
-                    type="text"
-                    placeholder="MM/AA"
+                    type="text" placeholder="MM/AA"
                     value={detallesPago.expiracion}
                     onChange={e => setDetallesPago({ ...detallesPago, expiracion: e.target.value })}
                   />
                   <input
-                    type="text"
-                    placeholder="CVV"
+                    type="text" placeholder="CVV"
                     value={detallesPago.cvv}
                     onChange={e => setDetallesPago({ ...detallesPago, cvv: e.target.value })}
                   />
@@ -275,37 +332,30 @@ export default function CarritoPage() {
               )}
               {metodoPago === 'paypal' && (
                 <input
-                  type="email"
-                  placeholder="Correo de PayPal"
+                  type="email" placeholder="Correo de PayPal"
                   value={detallesPago.email}
                   onChange={e => setDetallesPago({ ...detallesPago, email: e.target.value })}
                 />
               )}
-              {metodoPago === 'efectivo' && (
-                <p>Seleccionaste pago en efectivo. Se pagará al recibir.</p>
-              )}
+              {metodoPago === 'efectivo' && <p>Se pagará al recibir.</p>}
 
               <button className="guardar-btn" onClick={guardarMetodoPago}>
                 Guardar método de pago
               </button>
-              {mensajePago && (
-                <p className="mensaje-confirmacion">{mensajePago}</p>
-              )}
+              {mensajePago && <p className="mensaje-confirmacion">{mensajePago}</p>}
             </div>
 
-            {/* === Resumen y Pago === */}
+            {/* Resumen + Checkout */}
             <div className="resumen-carrito">
               <h3>Total: ${total.toLocaleString()} MXN</h3>
               <button className="pago-btn" onClick={manejarPago}>
                 Proceder al pago
               </button>
-              {mensajeFinal && (
-                <p className="mensaje-confirmacion">{mensajeFinal}</p>
-              )}
+              {mensajeFinal && <p className="mensaje-confirmacion">{mensajeFinal}</p>}
             </div>
           </>
         )}
       </div>
     </>
-  );
+  )
 }

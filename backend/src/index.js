@@ -1,3 +1,4 @@
+// backend/src/index.js
 require('dotenv').config();
 const express   = require('express');
 const cors      = require('cors');
@@ -6,13 +7,14 @@ const path      = require('path');
 const sequelize = require('./config/database');
 
 // Rutas
-const authRoutes      = require('./routes/auth');
-const productoRoutes  = require('./routes/producto');
-const categoriaRoutes = require('./routes/categoria');
-const modeloRoutes    = require('./routes/modelo');
-const carritoRoutes = require('./routes/carrito');
-const direccionRoutes = require('./routes/direccion');
-const metodoRoutes    = require('./routes/metodo');
+const authRoutes       = require('./routes/auth');
+const productoRoutes   = require('./routes/producto');
+const categoriaRoutes  = require('./routes/categoria');
+const modeloRoutes     = require('./routes/modelo');
+const carritoRoutes    = require('./routes/carrito');
+const direccionRoutes  = require('./routes/direccion');
+const metodoRoutes     = require('./routes/metodo');          // <–– archivo stays as 'metodo.js'
+const ventaRoutes      = require('./routes/venta');
 
 const app = express();
 
@@ -50,13 +52,17 @@ app.use(
 );
 
 // Rutas API
-app.use('/api/auth', authRoutes);          // ✅ Login y registro
-app.use('/api/productos', productoRoutes); // ✅ Productos
-app.use('/api/categorias', categoriaRoutes);
-app.use('/api/modelos', modeloRoutes);
-app.use('/api/carrito', carritoRoutes);
+app.use('/api/auth',        authRoutes);           // ✅ Login y registro
+app.use('/api/productos',   productoRoutes);       // ✅ Productos
+app.use('/api/categorias',  categoriaRoutes);
+app.use('/api/modelos',     modeloRoutes);
+app.use('/api/carrito',     carritoRoutes);
 app.use('/api/direcciones', direccionRoutes);
-app.use('/api/metodos',    metodoRoutes);
+
+// Para métodos de pago, mantenemos singular 'metodo.js' pero mount plural path:
+app.use('/api/metodos',     metodoRoutes);
+
+app.use('/api/ventas',      ventaRoutes);
 
 // Ruta raíz
 app.get('/', (_, res) => res.send('API OK'));

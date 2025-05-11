@@ -23,3 +23,19 @@ exports.crearMetodo = async (req, res) => {
     res.status(500).json({ msg: 'Error al crear método de pago' });
   }
 };
+
+// → NUEVO: eliminar método
+exports.eliminarMetodo = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { id } = req.params;
+    const eliminado = await MetodoPago.destroy({
+      where: { id, fk_usuario: userId }
+    });
+    if (!eliminado) return res.status(404).json({ msg: 'Método no encontrado' });
+    res.json({ msg: 'Método eliminado' });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ msg: 'Error al eliminar método' });
+  }
+};

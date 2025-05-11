@@ -9,45 +9,31 @@ const Categoria        = require('./Categoria');
 const ModeloMueble     = require('./Modelo_mueble');
 const DireccionEnvio   = require('./DireccionEnvio');
 const MetodoPago       = require('./MetodoPago');
+const Venta            = require('./Venta');
+const VentaDetalle     = require('./VentaDetalle');
 
-// ----------------- Asociaciones carrito -----------------
-Carrito.hasMany(CarritoDetalle, {
-  foreignKey: 'fk_carrito',
-  as: 'detalles'
-});
-CarritoDetalle.belongsTo(Carrito, {
-  foreignKey: 'fk_carrito',
-  as: 'carrito'
-});
+// ——— Carrito & Detalle ———
+Carrito.hasMany(CarritoDetalle, { foreignKey: 'fk_carrito', as: 'detalles' });
+CarritoDetalle.belongsTo(Carrito,     { foreignKey: 'fk_carrito', as: 'carrito' });
+Producto.hasMany(CarritoDetalle,      { foreignKey: 'fk_producto', as: 'ventasProducto' });
+CarritoDetalle.belongsTo(Producto,    { foreignKey: 'fk_producto', as: 'producto' });
 
-Producto.hasMany(CarritoDetalle, {
-  foreignKey: 'fk_producto',
-  as: 'detallesProducto'
-});
-CarritoDetalle.belongsTo(Producto, {
-  foreignKey: 'fk_producto',
-  as: 'producto'
-});
+// ——— Usuario & Dirección/Metodos ———
+Usuario.hasMany(DireccionEnvio, { foreignKey: 'fk_usuario', as: 'direcciones' });
+DireccionEnvio.belongsTo(Usuario, { foreignKey: 'fk_usuario', as: 'usuario' });
 
-// ----------------- Asociaciones de usuario -----------------
-// (opcional, si quieres eager-load)
-Usuario.hasMany(DireccionEnvio, {
-  foreignKey: 'fk_usuario',
-  as: 'direcciones'
-});
-DireccionEnvio.belongsTo(Usuario, {
-  foreignKey: 'fk_usuario',
-  as: 'usuario'
-});
+Usuario.hasMany(MetodoPago, { foreignKey: 'fk_usuario', as: 'metodos' });
+MetodoPago.belongsTo(Usuario, { foreignKey: 'fk_usuario', as: 'usuario' });
 
-Usuario.hasMany(MetodoPago, {
-  foreignKey: 'fk_usuario',
-  as: 'metodos'
-});
-MetodoPago.belongsTo(Usuario, {
-  foreignKey: 'fk_usuario',
-  as: 'usuario'
-});
+// ——— Venta & VentaDetalle ———
+Usuario.hasMany(Venta, { foreignKey: 'fk_usuario', as: 'ventas' });
+Venta.belongsTo(Usuario, { foreignKey: 'fk_usuario', as: 'usuario' });
+
+Venta.hasMany(VentaDetalle, { foreignKey: 'fk_venta', as: 'detalles' });
+VentaDetalle.belongsTo(Venta, { foreignKey: 'fk_venta', as: 'venta' });
+
+Producto.hasMany(VentaDetalle,   { foreignKey: 'fk_producto', as: 'detalleVentas' });
+VentaDetalle.belongsTo(Producto, { foreignKey: 'fk_producto', as: 'producto' });
 
 module.exports = {
   sequelize,
@@ -58,5 +44,7 @@ module.exports = {
   Categoria,
   ModeloMueble,
   DireccionEnvio,
-  MetodoPago
+  MetodoPago,
+  Venta,
+  VentaDetalle
 };
