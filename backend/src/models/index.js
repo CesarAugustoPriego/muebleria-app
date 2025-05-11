@@ -1,10 +1,16 @@
 // backend/src/models/index.js
-const sequelize       = require('../config/database');
-const Carrito         = require('./Carrito');
-const CarritoDetalle  = require('./CarritoDetalle');
-const Producto        = require('./Producto');
-// (importa aquí Usuario, Categoria, Modelo_mueble si los usas)
 
+const sequelize        = require('../config/database');
+const Carrito          = require('./Carrito');
+const CarritoDetalle   = require('./CarritoDetalle');
+const Producto         = require('./Producto');
+const Usuario          = require('./Usuario');
+const Categoria        = require('./Categoria');
+const ModeloMueble     = require('./Modelo_mueble');
+const DireccionEnvio   = require('./DireccionEnvio');
+const MetodoPago       = require('./MetodoPago');
+
+// ----------------- Asociaciones carrito -----------------
 Carrito.hasMany(CarritoDetalle, {
   foreignKey: 'fk_carrito',
   as: 'detalles'
@@ -23,10 +29,34 @@ CarritoDetalle.belongsTo(Producto, {
   as: 'producto'
 });
 
+// ----------------- Asociaciones de usuario -----------------
+// (opcional, si quieres eager-load)
+Usuario.hasMany(DireccionEnvio, {
+  foreignKey: 'fk_usuario',
+  as: 'direcciones'
+});
+DireccionEnvio.belongsTo(Usuario, {
+  foreignKey: 'fk_usuario',
+  as: 'usuario'
+});
+
+Usuario.hasMany(MetodoPago, {
+  foreignKey: 'fk_usuario',
+  as: 'metodos'
+});
+MetodoPago.belongsTo(Usuario, {
+  foreignKey: 'fk_usuario',
+  as: 'usuario'
+});
+
 module.exports = {
   sequelize,
   Carrito,
   CarritoDetalle,
   Producto,
-  // Usuario, Categoria, Modelo_mueble...
+  Usuario,
+  Categoria,
+  ModeloMueble,
+  DireccionEnvio,
+  MetodoPago
 };

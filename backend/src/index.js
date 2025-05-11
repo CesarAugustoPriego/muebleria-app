@@ -11,6 +11,8 @@ const productoRoutes  = require('./routes/producto');
 const categoriaRoutes = require('./routes/categoria');
 const modeloRoutes    = require('./routes/modelo');
 const carritoRoutes = require('./routes/carrito');
+const direccionRoutes = require('./routes/direccion');
+const metodoRoutes    = require('./routes/metodo');
 
 const app = express();
 
@@ -53,6 +55,8 @@ app.use('/api/productos', productoRoutes); // ✅ Productos
 app.use('/api/categorias', categoriaRoutes);
 app.use('/api/modelos', modeloRoutes);
 app.use('/api/carrito', carritoRoutes);
+app.use('/api/direcciones', direccionRoutes);
+app.use('/api/metodos',    metodoRoutes);
 
 // Ruta raíz
 app.get('/', (_, res) => res.send('API OK'));
