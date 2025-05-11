@@ -1,32 +1,28 @@
 // backend/src/models/modelo_mueble.js
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
-const Categoria = require('./categoria_mueble');
+const sequelize     = require('../config/database');
+const Categoria     = require('./Categoria');   // <— usa tu Categoria.js
 
-const Modelo = sequelize.define('modelo_mueble', {
+const Modelo_mueble = sequelize.define('Modelo_mueble', {
   id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true
+    type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true
   },
   modelo: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true
+    type: DataTypes.STRING, allowNull: false, unique: true
   },
   fk_categoria: {
-    type: DataTypes.INTEGER,
-    allowNull: true
+    type: DataTypes.INTEGER, allowNull: true
   }
 }, {
-  tableName: 'modelo_mueble',
+  tableName: 'modelo_mueble',   // <— mismo nombre que en la BD
   timestamps: false
 });
 
-// Asociación (opcional, para incluir datos de categoría)
-Modelo.belongsTo(Categoria, {
-  foreignKey: 'fk_categoria',
-  as: 'categoria'
-});
+Modelo_mueble.associate = db => {
+  db.Modelo_mueble.belongsTo(db.Categoria, {
+    foreignKey: 'fk_categoria',
+    as: 'categoria'
+  });
+};
 
-module.exports = Modelo;
+module.exports = Modelo_mueble;

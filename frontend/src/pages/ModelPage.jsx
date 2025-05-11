@@ -3,14 +3,15 @@ import { useParams } from 'react-router-dom';
 import Navbar from '../components/Auth/Navbar';
 import './ModelPage.css';
 
-const ModelPage = () => {
+export default function ModelPage() {
   const { categoria, modelo } = useParams();
   const [productos, setProductos] = useState([]);
   const [quantities, setQuantities] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const token = localStorage.getItem('token');
+  const API = 'http://localhost:4000/api';
 
-  // Mapea el slug de modelo a su ID en BD. Idealmente podrías obtener esto dinámico.
   const modeloSlugToId = {
     camas: 1,
     literas: 2,
@@ -25,50 +26,63 @@ const ModelPage = () => {
     'cocinas-integrales': 11,
     alacenas: 12
   };
-
   const modeloId = modeloSlugToId[modelo] || 0;
 
   useEffect(() => {
-    const fetchProductos = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch(`/api/productos/modelo/${modeloId}`);
+    if (!modeloId) {
+      setError('Modelo desconocido');
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    fetch(`${API}/productos/modelo/${modeloId}`)
+      .then(res => {
         if (!res.ok) throw new Error('No se pudieron cargar los productos');
-        const data = await res.json();
+        return res.json();
+      })
+      .then(data => {
         setProductos(data);
-        // Inicializa cantidades a 1
-        const initialQty = data.reduce((acc, p) => ({ ...acc, [p.id]: 1 }), {});
-        setQuantities(initialQty);
-      } catch (err) {
-        console.error(err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (modeloId) fetchProductos();
-    else setError('Modelo desconocido');
+        const initQty = data.reduce((acc, p) => ({ ...acc, [p.id]: 1 }), {});
+        setQuantities(initQty);
+      })
+      .catch(err => setError(err.message))
+      .finally(() => setLoading(false));
   }, [modeloId]);
 
   const handleQty = (id, val) => {
+    if (val < 1) val = 1;
     setQuantities(q => ({ ...q, [id]: val }));
   };
 
-  const addToCart = producto => {
-    // Aquí llamas a tu contexto o API de carrito
-    console.log('Agregar al carrito:', producto, 'Cantidad:', quantities[producto.id]);
+  const addToCart = async producto => {
+    if (!token) return alert('🔒 Debes iniciar sesión primero');
+    try {
+      const res = await fetch(`${API}/carrito/agregar`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          productoId: producto.id,
+          cantidad: quantities[producto.id] || 1
+        })
+      });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body.msg || 'Error desconocido');
+      alert('✅ ' + body.msg);
+    } catch (e) {
+      alert('❌ ' + e.message);
+    }
   };
 
   return (
     <div className="model-page">
       <Navbar />
-
       <header className="model-header">
         <h1>{modelo.replace(/-/g, ' ').toUpperCase()}</h1>
         <p>Explora nuestros {modelo.replace(/-/g, ' ')}</p>
       </header>
-
       <section className="product-list">
         {loading && <p>Cargando productos…</p>}
         {error && <p className="text-red-600">{error}</p>}
@@ -78,7 +92,7 @@ const ModelPage = () => {
         {!loading && !error && productos.map(p => (
           <div className="product-card" key={p.id}>
             <img
-              src={p.imagen_url}
+              src={`http://localhost:4000${p.imagen_url}`}
               alt={p.nombre}
               className="product-image"
             />
@@ -92,7 +106,10 @@ const ModelPage = () => {
                 value={quantities[p.id] || 1}
                 onChange={e => handleQty(p.id, parseInt(e.target.value, 10))}
               />
-              <button className="btn primary" onClick={() => addToCart(p)}>
+              <button
+                className="btn primary"
+                onClick={() => addToCart(p)}
+              >
                 Agregar al carrito
               </button>
             </div>
@@ -101,6 +118,4 @@ const ModelPage = () => {
       </section>
     </div>
   );
-};
-
-export default ModelPage;
+}
