@@ -1,4 +1,3 @@
-// src/pages/CarritoPage.jsx
 import React, { useEffect, useState } from 'react';
 import Navbar from '../components/Auth/Navbar';
 import './CarritoPage.css';
@@ -11,39 +10,34 @@ export default function CarritoPage() {
   const [carrito, setCarrito] = useState(null);
 
   // — Direcciones
-  const [direcciones, setDirecciones]         = useState([]);
+  const [direcciones, setDirecciones]           = useState([]);
   const [selectedDireccionId, setSelectedDireccionId] = useState(null);
-  const [nuevaDireccion, setNuevaDireccion]   = useState(false);
-  const [direccion, setDireccion]             = useState({
+  const [nuevaDireccion, setNuevaDireccion]     = useState(false);
+  const [direccion, setDireccion]               = useState({
     nombre: '', calle: '', ciudad: '', estado: '', cp: '', telefono: '', referencia: ''
   });
   const [mensajeDireccion, setMensajeDireccion] = useState('');
 
   // — Métodos de pago
-  const [metodos, setMetodos]                  = useState([]);
-  const [selectedMetodoId, setSelectedMetodoId] = useState(null);
-  const [nuevoMetodo, setNuevoMetodo]          = useState(false);
-  const [tipoNuevoMetodo, setTipoNuevoMetodo]  = useState('tarjeta');
-  const [detallesPago, setDetallesPago]        = useState({
+  const [metodos, setMetodos]                    = useState([]);
+  const [selectedMetodoId, setSelectedMetodoId]  = useState(null);
+  const [nuevoMetodo, setNuevoMetodo]            = useState(false);
+  const [tipoNuevoMetodo, setTipoNuevoMetodo]    = useState('tarjeta');
+  const [detallesPago, setDetallesPago]          = useState({
     numero: '', expiracion: '', cvv: '', email: ''
   });
-  const [mensajePago, setMensajePago]          = useState('');
+  const [mensajePago, setMensajePago]            = useState('');
 
   // — Checkout final
-  const [mensajeFinal, setMensajeFinal]        = useState('');
+  const [mensajeFinal, setMensajeFinal]          = useState('');
 
   useEffect(() => {
     // 1) cargar carrito
-    fetch(`${API}/carrito`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-      .then(r => r.json()).then(setCarrito)
-      .catch(console.error);
+    fetch(`${API}/carrito`, { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => r.json()).then(setCarrito).catch(console.error);
 
     // 2) cargar direcciones
-    fetch(`${API}/direcciones`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+    fetch(`${API}/direcciones`, { headers: { Authorization: `Bearer ${token}` } })
       .then(r => r.json())
       .then(dirs => {
         setDirecciones(dirs || []);
@@ -66,30 +60,25 @@ export default function CarritoPage() {
       .catch(console.error);
 
     // 3) cargar métodos de pago
-    fetch(`${API}/metodos`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+    fetch(`${API}/metodos`, { headers: { Authorization: `Bearer ${token}` } })
       .then(r => r.json())
       .then(mps => {
         setMetodos(mps || []);
         if (mps.length) {
-          const m = mps[0];
-          setSelectedMetodoId(m.id);
+          setSelectedMetodoId(mps[0].id);
         } else {
           setNuevoMetodo(true);
         }
       })
       .catch(console.error);
-  }, []);
+  }, [API, token]);
 
-  if (!carrito) return <p>Cargando carrito…</p>;
+  if (!carrito) return <p className="loading">Cargando carrito…</p>;
 
-  // — total
   const total = carrito.detalles.reduce(
     (sum, d) => sum + d.producto.precio_unitario * d.cantidad, 0
   );
 
-  // — Helpers carrito
   const recargarCarrito = () =>
     fetch(`${API}/carrito`, { headers:{ Authorization:`Bearer ${token}` }})
       .then(r=>r.json()).then(setCarrito).catch(console.error);
@@ -97,31 +86,23 @@ export default function CarritoPage() {
   const cambiarCantidad = (id, qty) => {
     fetch(`${API}/carrito/detalle/${id}`, {
       method: 'PUT',
-      headers:{
-        'Content-Type':'application/json',
-        Authorization:`Bearer ${token}`
-      },
+      headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` },
       body: JSON.stringify({ cantidad: qty })
     })
-      .then(recargarCarrito)
-      .catch(console.error);
+    .then(recargarCarrito)
+    .catch(console.error);
   };
   const eliminarItem = id => cambiarCantidad(id, 0);
 
-  // — guardar dirección
   const guardarDireccion = async () => {
-    // validación
     const { nombre, calle, ciudad, cp } = direccion;
     if (!nombre||!calle||!ciudad||!cp) {
-      return alert('Completa nombre, calle, ciudad y código postal.');
+      return alert('Completa todos los campos obligatorios.');
     }
     try {
       const res = await fetch(`${API}/direcciones`, {
         method: 'POST',
-        headers:{
-          'Content-Type':'application/json',
-          Authorization:`Bearer ${token}`
-        },
+        headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` },
         body: JSON.stringify({
           nombre_recibe: direccion.nombre,
           calle:         direccion.calle,
@@ -133,8 +114,7 @@ export default function CarritoPage() {
         })
       });
       const body = await res.json();
-      if (!res.ok) throw new Error(body.msg || 'Error guardando dirección');
-      // actualizar lista
+      if (!res.ok) throw new Error(body.msg);
       const dirs = await fetch(`${API}/direcciones`, {
         headers:{ Authorization:`Bearer ${token}` }
       }).then(r=>r.json());
@@ -147,9 +127,7 @@ export default function CarritoPage() {
     }
   };
 
-  // — guardar / actualizar método
   const guardarMetodoPago = async () => {
-    // validaciones
     if (nuevoMetodo) {
       if (tipoNuevoMetodo === 'tarjeta') {
         const { numero, expiracion, cvv } = detallesPago;
@@ -177,7 +155,6 @@ export default function CarritoPage() {
           payload.titular     = detallesPago.email;
         }
       } else {
-        // actualizar
         url    = `${API}/metodos/${selectedMetodoId}`;
         method = 'PUT';
         const m = metodos.find(x => x.id === selectedMetodoId);
@@ -185,18 +162,14 @@ export default function CarritoPage() {
         if (m.tipo === 'transferencia') payload.titular = m.titular;
       }
 
-      const res = await fetch(url, {
+      const res  = await fetch(url, {
         method,
-        headers:{
-          'Content-Type':'application/json',
-          Authorization:`Bearer ${token}`
-        },
+        headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` },
         body: JSON.stringify(payload)
       });
       const body = await res.json();
-      if (!res.ok) throw new Error(body.msg || 'Error guardando método');
-      // refrescar lista
-      const mps = await fetch(`${API}/metodos`, {
+      if (!res.ok) throw new Error(body.msg);
+      const mps  = await fetch(`${API}/metodos`, {
         headers:{ Authorization:`Bearer ${token}` }
       }).then(r=>r.json());
       setMetodos(mps);
@@ -208,46 +181,50 @@ export default function CarritoPage() {
     }
   };
 
-  // — borrar método
+  // Reemplaza tu antigua borrarMetodo por esto:
+
   const borrarMetodo = async () => {
     if (!selectedMetodoId) return;
     try {
-      const res = await fetch(`${API}/metodos/${selectedMetodoId}`, {
+      const res  = await fetch(`${API}/metodos/${selectedMetodoId}`, {
         method: 'DELETE',
-        headers:{ Authorization:`Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` }
       });
-      if (!res.ok) throw new Error('Error borrando método');
-      const remaining = metodos.filter(m => m.id !== selectedMetodoId);
-      setMetodos(remaining);
+      const body = await res.json();
+
+      if (!res.ok) {
+        // Si viene 400 con msg del backend, lo mostramos
+        return alert(body.msg || 'No se pudo eliminar el método');
+      }
+
+      // Éxito: actualizamos el listado en pantalla
+      setMetodos(metodos.filter(m => m.id !== selectedMetodoId));
       setSelectedMetodoId(null);
       setNuevoMetodo(true);
       setMensajePago('');
     } catch (e) {
-      alert('❌ ' + e.message);
+      console.error(e);
+      alert('Error de red al intentar borrar el método');
     }
   };
 
-  // — checkout
+
   const handleCheckout = async () => {
     if (!selectedDireccionId) return alert('Guarda tu dirección primero.');
     if (!selectedMetodoId)   return alert('Guarda tu método de pago primero.');
 
     try {
-      const res = await fetch(`${API}/carrito/checkout`, {
+      const res  = await fetch(`${API}/carrito/checkout`, {
         method: 'POST',
-        headers:{
-          'Content-Type':'application/json',
-          Authorization:`Bearer ${token}`
-        },
+        headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` },
         body: JSON.stringify({
           direccionId: selectedDireccionId,
           metodoId:    selectedMetodoId
         })
       });
       const body = await res.json();
-      if (!res.ok) throw new Error(body.msg || 'Error en checkout');
-      setMensajeFinal('✅ Tu compra se ha procesado correctamente.');
-      // recargar carrito cerrado
+      if (!res.ok) throw new Error(body.msg);
+      setMensajeFinal('✅ Compra procesada con éxito.');
       setCarrito({ ...carrito, detalles: [] });
     } catch (e) {
       alert('❌ ' + e.message);
@@ -259,181 +236,160 @@ export default function CarritoPage() {
       <Navbar />
       <div className="carrito-container">
         <h2>🛒 Tu Carrito</h2>
-        {carrito.detalles.length === 0
-          ? <p>Tu carrito está vacío.</p>
-          : (
+        {carrito.detalles.length === 0 ? (
+          <p className="empty">Tu carrito está vacío.</p>
+        ) : (
           <>
-            {/* Items */}
+            {/* Ítems */}
             <div className="carrito-items">
               {carrito.detalles.map(d => (
-                <div key={d.id} className="carrito-item">
-                  <img
-                    src={`http://localhost:4000${d.producto.imagen_url}`}
-                    alt={d.producto.nombre}
-                  />
-                  <div className="item-info">
+                <div key={d.id} className="carrito-item-card">
+                  <div className="item-image">
+                    <img
+                      src={`http://localhost:4000${d.producto.imagen_url}`}
+                      alt={d.producto.nombre}
+                    />
+                  </div>
+                  <div className="item-details">
                     <h4>{d.producto.nombre}</h4>
-                    <p>${d.producto.precio_unitario.toLocaleString()} MXN</p>
-                    <div className="cantidad-control">
-                      <label>Cantidad:</label>
+                    <p className="price">
+                      ${d.producto.precio_unitario.toLocaleString()} MXN
+                    </p>
+                    <div className="cantidad-eliminar">
+                      <label htmlFor={`qty-${d.id}`}>Cantidad:</label>
                       <input
+                        id={`qty-${d.id}`}
                         type="number"
                         min="1"
                         value={d.cantidad}
-                        onChange={e=>cambiarCantidad(d.id,+e.target.value||1)}
+                        onChange={e => cambiarCantidad(d.id, +e.target.value || 1)}
                       />
+                      <button className="btn-eliminar" onClick={() => eliminarItem(d.id)}>
+                        Eliminar
+                      </button>
                     </div>
-                    <button className="eliminar" onClick={()=>eliminarItem(d.id)}>
-                      Eliminar
-                    </button>
                   </div>
                 </div>
               ))}
             </div>
 
             {/* Dirección */}
-            <div className="direccion-section">
+            <section className="direccion-section">
               <h3>📦 Dirección de envío</h3>
-              {!nuevaDireccion && (
-                <>
-                  <select
-                    value={selectedDireccionId||''}
-                    onChange={e=>{
-                      if(e.target.value==='nueva'){
-                        setNuevaDireccion(true);
-                        setSelectedDireccionId(null);
-                      } else {
-                        const id = parseInt(e.target.value,10);
-                        const d  = direcciones.find(x=>x.id===id);
-                        setSelectedDireccionId(id);
-                        setDireccion({
-                          nombre:    d.nombre_recibe,
-                          calle:     d.calle,
-                          ciudad:    d.ciudad,
-                          estado:    d.estado,
-                          cp:        d.cp,
-                          telefono:  d.telefono,
-                          referencia:d.referencia||''
-                        });
-                      }
-                    }}
-                  >
-                    <option value="">Selecciona una dirección</option>
-                    {direcciones.map(d=>(
-                      <option key={d.id} value={d.id}>
-                        {d.calle}, {d.ciudad}
-                      </option>
-                    ))}
-                    <option value="nueva">+ Agregar nueva</option>
-                  </select>
-                </>
+              { !nuevaDireccion && (
+                <select
+                  className="direccion-select"
+                  value={selectedDireccionId || ''}
+                  onChange={e => {
+                    if (e.target.value === 'nueva') {
+                      setNuevaDireccion(true);
+                      setSelectedDireccionId(null);
+                    } else {
+                      const id = Number(e.target.value);
+                      const d  = direcciones.find(x => x.id === id);
+                      setSelectedDireccionId(id);
+                      setDireccion({
+                        nombre:    d.nombre_recibe,
+                        calle:     d.calle,
+                        ciudad:    d.ciudad,
+                        estado:    d.estado,
+                        cp:        d.cp,
+                        telefono:  d.telefono,
+                        referencia:d.referencia || ''
+                      });
+                    }
+                  }}
+                >
+                  <option value="">Selecciona una dirección</option>
+                  {direcciones.map(d => (
+                    <option key={d.id} value={d.id}>
+                      {d.calle}, {d.ciudad}
+                    </option>
+                  ))}
+                  <option value="nueva">+ Agregar nueva</option>
+                </select>
               )}
-              {nuevaDireccion && (
-                <>
-                  <input
-                    type="text" placeholder="Nombre completo"
-                    value={direccion.nombre}
-                    onChange={e=>setDireccion({...direccion,nombre:e.target.value})}
-                  />
-                  <input
-                    type="text" placeholder="Calle"
-                    value={direccion.calle}
-                    onChange={e=>setDireccion({...direccion,calle:e.target.value})}
-                  />
-                  <input
-                    type="text" placeholder="Ciudad"
-                    value={direccion.ciudad}
-                    onChange={e=>setDireccion({...direccion,ciudad:e.target.value})}
-                  />
-                  <input
-                    type="text" placeholder="Estado"
-                    value={direccion.estado}
-                    onChange={e=>setDireccion({...direccion,estado:e.target.value})}
-                  />
-                  <input
-                    type="text" placeholder="Código postal"
-                    value={direccion.cp}
-                    onChange={e=>setDireccion({...direccion,cp:e.target.value})}
-                  />
-                  <input
-                    type="tel" placeholder="Teléfono"
-                    value={direccion.telefono}
-                    onChange={e=>setDireccion({...direccion,telefono:e.target.value})}
-                  />
-                  <input
-                    type="text" placeholder="Referencia (opcional)"
-                    value={direccion.referencia}
-                    onChange={e=>setDireccion({...direccion,referencia:e.target.value})}
-                  />
-                </>
+              { nuevaDireccion && (
+                <div className="direccion-form-grid">
+                  {['nombre','calle','ciudad','estado','cp','telefono','referencia'].map(field => (
+                    <input
+                      key={field}
+                      type="text"
+                      placeholder={field === 'referencia' ? 'Referencia (opc.)' : field.charAt(0).toUpperCase() + field.slice(1)}
+                      value={direccion[field]}
+                      onChange={e => setDireccion(d => ({ ...d, [field]: e.target.value }))}
+                    />
+                  ))}
+                </div>
               )}
               <button className="guardar-btn" onClick={guardarDireccion}>
-                {nuevaDireccion ? 'Guardar dirección nueva' : 'Actualizar dirección'}
+                {nuevaDireccion ? 'Guardar nueva' : 'Actualizar dirección'}
               </button>
               {mensajeDireccion && <p className="mensaje-confirmacion">{mensajeDireccion}</p>}
-            </div>
+            </section>
 
             {/* Método de pago */}
-            <div className="metodo-pago-section">
+            <section className="metodo-pago-section">
               <h3>💳 Método de pago</h3>
-              {!nuevoMetodo && (
+              {!nuevoMetodo ? (
                 <>
                   <select
+                    className="metodo-select"
                     value={selectedMetodoId||''}
-                    onChange={e=>{
-                      if(e.target.value==='nuevo'){
+                    onChange={e => {
+                      if (e.target.value==='nuevo') {
                         setNuevoMetodo(true);
                         setSelectedMetodoId(null);
                       } else {
-                        setSelectedMetodoId(parseInt(e.target.value,10));
+                        setSelectedMetodoId(+e.target.value);
                       }
                     }}
                   >
                     <option value="">Selecciona un método</option>
-                    {metodos.map(m=>(
+                    {metodos.map(m => (
                       <option key={m.id} value={m.id}>
-                        {m.tipo==='tarjeta'
+                        {m.tipo === 'tarjeta'
                           ? `Tarjeta ••••${m.token_last4}`
-                          : m.tipo==='transferencia'
+                          : m.tipo === 'transferencia'
                             ? `PayPal (${m.titular})`
-                            : 'Efectivo (al recibir)'}
+                            : 'Efectivo'}
                       </option>
                     ))}
                     <option value="nuevo">+ Agregar nuevo</option>
                   </select>
                   {selectedMetodoId && (
-                    <button className="eliminar" onClick={borrarMetodo}>
-                      Eliminar este método
+                    <button className="btn-eliminar" onClick={borrarMetodo}>
+                      Eliminar método
                     </button>
                   )}
                 </>
-              )}
-              {nuevoMetodo && (
-                <>
+              ) : (
+                <div className="metodo-form-grid">
                   <select
+                    className="metodo-select"
                     value={tipoNuevoMetodo}
                     onChange={e=>setTipoNuevoMetodo(e.target.value)}
                   >
                     <option value="tarjeta">Tarjeta</option>
                     <option value="transferencia">PayPal</option>
-                    <option value="efectivo">Efectivo (al recibir)</option>
+                    <option value="efectivo">Efectivo</option>
                   </select>
                   {tipoNuevoMetodo==='tarjeta' && (
                     <>
                       <input
                         type="text" placeholder="Número de tarjeta"
                         value={detallesPago.numero}
-                        onChange={e=>setDetallesPago({...detallesPago,numero:e.target.value})}
+                        onChange={e=>setDetallesPago(d=>({...d, numero:e.target.value}))}
                       />
                       <input
                         type="text" placeholder="MM/AA"
                         value={detallesPago.expiracion}
-                        onChange={e=>setDetallesPago({...detallesPago,expiracion:e.target.value})}
+                        onChange={e=>setDetallesPago(d=>({...d, expiracion:e.target.value}))}
                       />
                       <input
                         type="text" placeholder="CVV"
                         value={detallesPago.cvv}
-                        onChange={e=>setDetallesPago({...detallesPago,cvv:e.target.value})}
+                        onChange={e=>setDetallesPago(d=>({...d, cvv:e.target.value}))}
                       />
                     </>
                   )}
@@ -441,19 +397,16 @@ export default function CarritoPage() {
                     <input
                       type="email" placeholder="Correo PayPal"
                       value={detallesPago.email}
-                      onChange={e=>setDetallesPago({...detallesPago,email:e.target.value})}
+                      onChange={e=>setDetallesPago(d=>({...d, email:e.target.value}))}
                     />
                   )}
-                  {tipoNuevoMetodo==='efectivo' && (
-                    <p>Pagarás al recibir.</p>
-                  )}
                   <button className="guardar-btn" onClick={guardarMetodoPago}>
-                    Guardar método nuevo
+                    Guardar método
                   </button>
-                </>
+                </div>
               )}
               {mensajePago && <p className="mensaje-confirmacion">{mensajePago}</p>}
-            </div>
+            </section>
 
             {/* Checkout */}
             <div className="resumen-carrito">

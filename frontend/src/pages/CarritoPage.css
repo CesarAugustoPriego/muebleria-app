@@ -1,164 +1,249 @@
+/* ==== CarritoPage.css ==== */
+
+/* === Contenedor Principal === */
 .carrito-container {
   max-width: 900px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 2rem 1rem;
   font-family: 'Segoe UI', sans-serif;
-  background-color: #fdfdfd;
+  background: #f5f7fa;
 }
 
+/* Título */
 .carrito-container h2 {
-  font-size: 2rem;
-  margin-bottom: 20px;
+  font-size: 2.2rem;
   color: #333;
   text-align: center;
+  margin-bottom: 2rem;
 }
 
-.carrito-items {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.carrito-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 20px;
-  background-color: #ffffff;
-  padding: 15px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.carrito-item img {
-  width: 120px;
-  height: auto;
-  border-radius: 8px;
-}
-
-.item-info {
-  flex-grow: 1;
-}
-
-.item-info h4 {
-  margin: 0 0 10px 0;
-  font-size: 1.2rem;
-  color: #222;
-}
-
-.item-info p {
-  margin: 0 0 10px 0;
+/* Estado Loading / Vacío */
+.loading,
+.empty {
+  text-align: center;
   color: #666;
+  font-size: 1.1rem;
+  margin: 2rem 0;
 }
 
-.cantidad-control {
+/* ==== Ítems ==== */
+.carrito-items {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 640px) {
+  .carrito-items {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.carrito-item-card {
+  display: flex;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.carrito-item-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+/* Imagen */
+.item-image {
+  flex: 0 0 160px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin: 10px 0;
+  justify-content: center;
+  background: #f0f4f8;
+}
+.item-image img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
 }
 
-.cantidad-control input {
-  width: 60px;
-  padding: 4px;
-  font-size: 1rem;
+/* Detalles */
+.item-details {
+  flex: 1;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
 }
-
-.eliminar {
-  background-color: #e53e3e;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.eliminar:hover {
-  background-color: #c53030;
-}
-
-.resumen-carrito {
-  margin-top: 30px;
-  text-align: right;
-}
-
-.resumen-carrito h3 {
-  font-size: 1.4rem;
-  margin-bottom: 10px;
+.item-details h4 {
+  margin: 0;
+  font-size: 1.2rem;
   color: #2d3748;
 }
-
-.pago-btn {
-  background-color: #38a169;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  font-size: 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.3s;
+.item-details .price {
+  margin: 0.5rem 0 1rem;
+  color: #4a5568;
+  font-weight: 500;
 }
 
-.pago-btn:hover {
-  background-color: #2f855a;
+/* Cantidad & Eliminar */
+.cantidad-eliminar {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
-
-/* Sección de dirección */
-.direccion-section,
-.metodo-pago-section {
-  margin-top: 40px;
-  padding: 20px;
-  background-color: #f7fafc;
-  border-radius: 12px;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
-}
-
-.direccion-section h3,
-.metodo-pago-section h3 {
-  margin-bottom: 15px;
-  font-size: 1.3rem;
-  color: #2c5282;
-}
-
-.direccion-section input,
-.metodo-pago-section input,
-.metodo-pago-section select {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 12px;
-  font-size: 1rem;
-  border-radius: 6px;
-  border: 1px solid #cbd5e0;
-  transition: border-color 0.3s;
-}
-
-.direccion-section input:focus,
-.metodo-pago-section input:focus,
-.metodo-pago-section select:focus {
-  border-color: #4299e1;
-  outline: none;
-}
-
-.guardar-btn {
-  background-color: #3182ce;
-  color: white;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background 0.3s;
-  margin-top: 5px;
-}
-
-.guardar-btn:hover {
-  background-color: #2b6cb0;
-}
-
-.mensaje-confirmacion {
-  margin-top: 10px;
-  color: #2f855a;
-  font-weight: bold;
+.cantidad-eliminar label {
   font-size: 0.95rem;
+  color: #2d3748;
+}
+.cantidad-eliminar input {
+  width: 60px;
+  padding: 0.4rem;
+  border: 1px solid #cbd5e0;
+  border-radius: 4px;
+}
+.btn-eliminar {
+  background: #e53e3e;
+  color: white;
+  border: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-eliminar:hover {
+  background: #c53030;
+}
+
+/* ==== Dirección de envío ==== */
+.direccion-section {
+  margin-top: 2rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  padding: 1.5rem;
+}
+.direccion-section h3 {
+  margin-top: 0;
+  color: #2b6cb0;
+  font-size: 1.25rem;
+  border-bottom: 2px solid #ebf4ff;
+  padding-bottom: 0.5rem;
+}
+
+/* Select y Inputs */
+.direccion-select,
+.direccion-form-grid input {
+  width: 100%;
+  padding: 0.75rem;
+  margin: 0.75rem 0;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.direccion-select:focus,
+.direccion-form-grid input:focus {
+  outline: none;
+  border-color: #2b6cb0;
+  box-shadow: 0 0 0 3px rgba(66,153,225,0.2);
+}
+
+/* Grid para múltiples inputs */
+.direccion-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+/* Botón Guardar */
+.guardar-btn {
+  background: #2b6cb0;
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+.guardar-btn:hover {
+  background: #2c5282;
+  transform: translateY(-1px);
+}
+
+/* Mensaje confirmación */
+.mensaje-confirmacion {
+  margin-top: 0.5rem;
+  color: #2f855a;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* ==== Método de pago ==== */
+.metodo-pago-section {
+  margin-top: 2rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  padding: 1.5rem;
+}
+.metodo-pago-section h3 {
+  margin-top: 0;
+  color: #2b6cb0;
+  font-size: 1.25rem;
+  border-bottom: 2px solid #ebf4ff;
+  padding-bottom: 0.5rem;
+}
+
+/* Select y Inputs en método */
+.metodo-select,
+.metodo-form-grid input {
+  width: 100%;
+  padding: 0.75rem;
+  margin: 0.75rem 0;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.metodo-select:focus,
+.metodo-form-grid input:focus {
+  outline: none;
+  border-color: #2b6cb0;
+  box-shadow: 0 0 0 3px rgba(66,153,225,0.2);
+}
+
+/* Grid de formulario de nuevo método */
+.metodo-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+/* ==== Resumen y Checkout ==== */
+.resumen-carrito {
+  margin: 2.5rem 0;
+  text-align: right;
+}
+.resumen-carrito h3 {
+  font-size: 1.5rem;
+  color: #2d3748;
+  margin-bottom: 1rem;
+}
+.pago-btn {
+  background: #2b6cb0;
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.2s, transform 0.1s;
+}
+.pago-btn:hover {
+  background: #2c5282;
+  transform: translateY(-1px);
+}
+
+/* ==== Ajuste para Navbar fija ==== */
+body {
+  padding-top: 60px;
 }
