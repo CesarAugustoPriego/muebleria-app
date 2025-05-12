@@ -1,37 +1,54 @@
-import React, { useState } from 'react';
+// frontend/src/pages/LoginPage.jsx
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Login from '../components/Auth/Login';
+
+import { AuthContext }     from '../contexts/AuthContext';
+import { CartContext }     from '../contexts/CartContext';
+import { PurchaseContext } from '../contexts/PurchaseContext';
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const [error, setError] = useState('');
 
-  const handleLogin = async (e) => {
+  const { login }           = useContext(AuthContext);
+  const { clearCart }       = useContext(CartContext);
+  const { clearPurchases }  = useContext(PurchaseContext);
+
+  const handleLogin = async e => {
     e.preventDefault();
-    const form = e.target;
-    const user = form.usuario.value;
+    const form     = e.target;
+    const usuario  = form.usuario.value;
     const password = form.password.value;
 
+    // Validación mínima
+    if (!usuario || !password) {
+      setError('Faltan campos');
+      return;
+    }
+
     try {
-      const res = await fetch('/api/auth/login', { // 🔧 URL corregida
+      const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user, password }),
+        // Envía user y password tal como lo lee tu authController
+        body: JSON.stringify({ user: usuario, password })
       });
 
       const data = await res.json();
-
       if (!res.ok) {
-        setError(data.msg || 'Error desconocido'); // 🔴 Captura mensaje del backend
+        setError(data.msg || 'Credenciales inválidas');
         return;
       }
 
-      // Guardar token
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('rol', data.rol);
-      localStorage.setItem('nombres', data.nombres);
+      // 1) Actualiza el contexto de autenticación
+      login(data.token, { rol: data.rol, nombres: data.nombres });
 
-      // Redirigir según rol
+      // 2) Limpia carrito y compras de sesiones anteriores
+      clearCart();
+      clearPurchases();
+
+      // 3) Redirige según rol
       if (data.rol === 'admin') {
         navigate('/admin/dashboard');
       } else {

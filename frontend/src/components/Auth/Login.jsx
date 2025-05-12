@@ -1,83 +1,79 @@
+// frontend/src/components/Auth/Login.jsx
 import React, { useState } from 'react';
 import './Auth.css';
 import heroBackground from '../../assets/img/imghero-bg.png';
 import logo from '../../assets/img/Logo.png';
 
 export default function Login({ onSubmit, error }) {
-  const [formData, setFormData] = useState({
-    usuario: '',
-    password: ''
-  });
-  const [errores, setErrores] = useState({});
-  const [mostrarPassword, setMostrarPassword] = useState(false);
+  const [formData, setFormData] = useState({ usuario: '', password: '' });
+  const [errors, setErrors]     = useState({});
+  const [showPwd, setShowPwd]   = useState(false);
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = e => {
     e.preventDefault();
-    const nuevosErrores = {};
-    if (!formData.usuario) nuevosErrores.usuario = 'Este campo es obligatorio';
-    if (!formData.password) nuevosErrores.password = 'Este campo es obligatorio';
+    const errs = {};
+    if (!formData.usuario) errs.usuario = 'Obligatorio';
+    if (!formData.password) errs.password = 'Obligatorio';
 
-    if (Object.keys(nuevosErrores).length > 0) {
-      setErrores(nuevosErrores);
+    if (Object.keys(errs).length) {
+      setErrors(errs);
     } else {
-      setErrores({});
-      onSubmit(e); // envía el form al componente padre
+      setErrors({});
+      onSubmit(e);  // invoca handleLogin de LoginPage
     }
   };
 
   return (
-    <div
-      className="login-container"
-      style={{
+    <div className="login-container" style={{
         backgroundImage: `url(${heroBackground})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backdropFilter: 'blur(5px)',
-        WebkitBackdropFilter: 'blur(5px)',
-      }}
-    >
+        backdropFilter: 'blur(5px)', WebkitBackdropFilter: 'blur(5px)'
+      }}>
       <div className="login-box">
         <div className="logo-container">
-          <img src={logo} alt="Logo de la empresa" className="logo" />
+          <img src={logo} alt="Logo" className="logo" />
         </div>
         <h2 className="login-title">Inicia sesión</h2>
         <form className="login-form" onSubmit={handleSubmit}>
           <input
             type="text"
             name="usuario"
-            placeholder="Correo electrónico o usuario"
+            placeholder="Usuario o correo"
             className="login-input"
             onChange={handleChange}
+            value={formData.usuario}
           />
-          {errores.usuario && <span className="input-error">{errores.usuario}</span>}
+          {errors.usuario && <span className="input-error">{errors.usuario}</span>}
 
           <div className="password-field">
             <input
-              type={mostrarPassword ? 'text' : 'password'}
+              type={showPwd ? 'text' : 'password'}
               name="password"
               placeholder="Contraseña"
               className="login-input"
               onChange={handleChange}
+              value={formData.password}
             />
             <button
               type="button"
               className="toggle-password"
-              onClick={() => setMostrarPassword(prev => !prev)}
+              onClick={() => setShowPwd(p => !p)}
             >
-              {mostrarPassword ? 'Ocultar' : 'Ver'}
+              {showPwd ? 'Ocultar' : 'Ver'}
             </button>
           </div>
-          {errores.password && <span className="input-error">{errores.password}</span>}
+          {errors.password && <span className="input-error">{errors.password}</span>}
 
           <button type="submit" className="login-button">Entrar</button>
+          {error && <span className="input-error">{error}</span>}
         </form>
-        {error && <span className="input-error">{error}</span>}
-        <a href="/registro" className="forgot-password">¿No tienes cuenta? Regístrate aquí</a>
+        <a href="/registro" className="forgot-password">
+          ¿No tienes cuenta? Regístrate aquí
+        </a>
       </div>
     </div>
   );

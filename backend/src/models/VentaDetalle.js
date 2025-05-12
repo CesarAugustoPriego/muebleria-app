@@ -1,11 +1,7 @@
-// backend/src/models/VentaDetalle.js
 const { DataTypes } = require('sequelize');
 const sequelize     = require('../config/database');
 
-const Venta   = require('./Venta');
-const Producto = require('./Producto');
-
-const VentaDetalle = sequelize.define('venta_detalle', {
+const VentaDetalle = sequelize.define('VentaDetalle', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -36,23 +32,15 @@ const VentaDetalle = sequelize.define('venta_detalle', {
   timestamps: false
 });
 
-// ——— Asociaciones ———
-Venta.hasMany(VentaDetalle, {
-  foreignKey: 'fk_venta',
-  as: 'detalles'
-});
-VentaDetalle.belongsTo(Venta, {
-  foreignKey: 'fk_venta',
-  as: 'venta'
-});
-
-Producto.hasMany(VentaDetalle, {
-  foreignKey: 'fk_producto',
-  as: 'venta_productos'
-});
-VentaDetalle.belongsTo(Producto, {
-  foreignKey: 'fk_producto',
-  as: 'producto'
-});
+VentaDetalle.associate = models => {
+  VentaDetalle.belongsTo(models.Venta, {
+    as: 'venta',
+    foreignKey: 'fk_venta'
+  });
+  VentaDetalle.belongsTo(models.Producto, {
+    as: 'producto',
+    foreignKey: 'fk_producto'
+  });
+};
 
 module.exports = VentaDetalle;

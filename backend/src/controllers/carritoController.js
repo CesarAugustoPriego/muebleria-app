@@ -4,22 +4,20 @@ const {
   Carrito,
   CarritoDetalle,
   Producto,
-  DireccionEnvio,
-  MetodoPago,
   Venta,
   VentaDetalle,
   sequelize
 } = require('../models');
 
 /**
- * Obtiene (o crea) el carrito "abierto" del usuario.
+ * Obtiene o crea (sólo si es necesario) el carrito "abierto" del usuario.
  */
 async function obtenerCarritoActivo(usuarioId) {
   let carrito = await Carrito.findOne({
     where: { fk_usuario: usuarioId, estado: 'abierto' }
   });
   if (!carrito) {
-    carrito = await Carrito.create({ fk_usuario: usuarioId });
+    carrito = await Carrito.create({ fk_usuario: usuarioId, estado: 'abierto' });
   }
   return carrito;
 }
@@ -30,7 +28,13 @@ async function obtenerCarritoActivo(usuarioId) {
 async function verCarrito(req, res) {
   try {
     const uid = req.user.id;
-    const carrito = await obtenerCarritoActivo(uid);
+    // Sólo buscamos el carrito del usuario
+    const carrito = await Carrito.findOne({
+      where: { fk_usuario: uid, estado: 'abierto' }
+    });
+    if (!carrito) {
+      return res.json({ id: null, detalles: [] });
+    }
     const detalles = await CarritoDetalle.findAll({
       where: { fk_carrito: carrito.id },
       include: [{ model: Producto, as: 'producto' }]
@@ -50,23 +54,21 @@ async function agregarAlCarrito(req, res) {
     const uid = req.user.id;
     const { productoId, cantidad } = req.body;
 
+    // Sólo el carrito de este usuario
     const carrito = await obtenerCarritoActivo(uid);
 
-    let det = await CarritoDetalle.findOne({
-      where: {
-        fk_carrito: carrito.id,
-        fk_producto: productoId
-      }
+    let detalle = await CarritoDetalle.findOne({
+      where: { fk_carrito: carrito.id, fk_producto: productoId }
     });
 
-    if (det) {
-      det.cantidad += cantidad;
-      await det.save();
+    if (detalle) {
+      detalle.cantidad += cantidad;
+      await detalle.save();
     } else {
       const prod = await Producto.findByPk(productoId);
       if (!prod) return res.status(404).json({ msg: 'Producto no existe' });
 
-      det = await CarritoDetalle.create({
+      detalle = await CarritoDetalle.create({
         fk_carrito:     carrito.id,
         fk_producto:    productoId,
         cantidad,
@@ -74,7 +76,7 @@ async function agregarAlCarrito(req, res) {
       });
     }
 
-    return res.json({ msg: 'Producto agregado', detalle: det });
+    return res.json({ msg: 'Producto agregado', detalle });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ msg: 'Error al agregar al carrito' });
@@ -88,22 +90,23 @@ async function actualizarCantidad(req, res) {
   try {
     const uid = req.user.id;
     const { cantidad } = req.body;
-    const det = await CarritoDetalle.findByPk(req.params.id, {
+    const detalle = await CarritoDetalle.findByPk(req.params.id, {
       include: [{ model: Carrito, as: 'carrito' }]
     });
 
-    if (!det || det.carrito.fk_usuario !== uid) {
+    // Verificamos que exista y pertenezca al usuario
+    if (!detalle || detalle.carrito.fk_usuario !== uid) {
       return res.status(404).json({ msg: 'Detalle no encontrado' });
     }
 
     if (cantidad < 1) {
-      await det.destroy();
+      await detalle.destroy();
       return res.json({ msg: 'Producto eliminado' });
     }
 
-    det.cantidad = cantidad;
-    await det.save();
-    return res.json({ msg: 'Cantidad actualizada', detalle: det });
+    detalle.cantidad = cantidad;
+    await detalle.save();
+    return res.json({ msg: 'Cantidad actualizada', detalle });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ msg: 'Error al actualizar la cantidad' });
@@ -119,8 +122,15 @@ async function checkout(req, res) {
     const uid = req.user.id;
     const { direccionId, metodoId } = req.body;
 
-    // 1) Traer carrito y sus detalles
-    const carrito = await obtenerCarritoActivo(uid);
+    // Buscamos sólo el carrito de este usuario
+    const carrito = await Carrito.findOne({
+      where: { fk_usuario: uid, estado: 'abierto' }
+    });
+    if (!carrito) {
+      await t.rollback();
+      return res.status(400).json({ msg: 'No tienes un carrito activo' });
+    }
+
     const detalles = await CarritoDetalle.findAll({
       where: { fk_carrito: carrito.id }
     });
@@ -129,13 +139,13 @@ async function checkout(req, res) {
       return res.status(400).json({ msg: 'El carrito está vacío' });
     }
 
-    // 2) Calcular total
+    // Calcular total
     const total = detalles.reduce(
       (sum, d) => sum + parseFloat(d.precio_unitario) * d.cantidad,
       0
     );
 
-    // 3) Crear la venta
+    // Crear venta
     const venta = await Venta.create({
       fk_usuario:         uid,
       fk_direccion_envio: direccionId || null,
@@ -145,7 +155,7 @@ async function checkout(req, res) {
       estado:             'pagado'
     }, { transaction: t });
 
-    // 4) Registrar detalles de venta
+    // Detalles de la venta
     for (const d of detalles) {
       await VentaDetalle.create({
         fk_venta:        venta.id,
@@ -156,7 +166,7 @@ async function checkout(req, res) {
       }, { transaction: t });
     }
 
-    // 5) Cerrar carrito y limpiar detalles
+    // Cerramos carrito y lo limpiamos
     carrito.estado = 'cerrado';
     await carrito.save({ transaction: t });
     await CarritoDetalle.destroy({

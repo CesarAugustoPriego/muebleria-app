@@ -11,11 +11,11 @@ exports.listarVentas = async (req, res) => {
       include: [
         {
           model: VentaDetalle,
-          as: 'detallesVenta',        // ← coincide con tu alias en models/index.js
+          as: 'detallesVenta',       // coincide con Venta.hasMany(..., as: 'detallesVenta')
           include: [
             {
               model: Producto,
-              as: 'producto'          // ← coincide con el alias en tu VentaDetalle model
+              as: 'productoVenta'    // coincide con VentaDetalle.belongsTo(Producto, as: 'productoVenta')
             }
           ]
         }
