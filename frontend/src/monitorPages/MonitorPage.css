@@ -1,0 +1,75 @@
+.monitor-container {
+  max-width: 960px;
+  margin: 2rem auto;
+  font-family: sans-serif;
+  padding: 0 1rem;
+}
+.monitor-container h1 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Resumen superior */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  padding: 1rem;
+  text-align: center;
+}
+.card strong {
+  display: block;
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+.card span {
+  color: #555;
+}
+
+/* Gráficos lado a lado */
+.charts-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.chart-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  padding: 1rem;
+}
+
+/* Lista de top queries */
+.top-list h2 {
+  margin-bottom: 0.5rem;
+}
+.top-list ul {
+  list-style: none;
+  padding: 0;
+}
+.top-list li {
+  background: #fafafa;
+  padding: 0.5rem;
+  margin-bottom: 0.25rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+.top-list strong {
+  color: #e67e22;
+  margin-right: 0.5rem;
+}
+
+/* Estados de carga/error */
+.monitor-loading,
+.monitor-error {
+  text-align: center;
+  color: #c0392b;
+  font-size: 1.1rem;
+}

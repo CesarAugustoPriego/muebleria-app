@@ -1,3 +1,4 @@
+// frontend/src/components/Navbar.jsx
 import React, { useState, useContext } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Navbar.css';
@@ -12,11 +13,14 @@ export default function Navbar() {
   const location       = useLocation();
   const navigate       = useNavigate();
 
-  const { token, logout }         = useContext(AuthContext);
-  const { clearCart }             = useContext(CartContext);
-  const { clearPurchases }        = useContext(PurchaseContext);
+  const { token, logout } = useContext(AuthContext);
+  const { clearCart }     = useContext(CartContext);
+  const { clearPurchases }= useContext(PurchaseContext);
 
-  // Solo mostramos el botón si hay token (usuario logueado)
+  // Obtener rol desde AuthContext o localStorage
+  // Si AuthContext provee 'rol', úsalo; si no, usa localStorage
+  const role = useContext(AuthContext).user?.rol || localStorage.getItem('rol');
+
   const isLoggedIn = Boolean(token);
 
   const handleLogout = () => {
@@ -30,14 +34,25 @@ export default function Navbar() {
   return (
     <header className="navbar">
       <div className="navbar__brand">
-        <img src={logo} alt="Logo" className="navbar__logo" onClick={()=>setOpen(false)}/>
+        <img src={logo} alt="Logo" className="navbar__logo" onClick={() => setOpen(false)} />
       </div>
 
       <nav className={`navbar__links ${open ? 'open' : ''}`}>
-        <Link to="/"           onClick={()=>setOpen(false)} className={location.pathname==='/'            ? 'active' : ''}>Inicio</Link>
-        <Link to="/catalogo"   onClick={()=>setOpen(false)} className={location.pathname.startsWith('/catalogo')? 'active' : ''}>Catálogo</Link>
-        <Link to="/carrito"    onClick={()=>setOpen(false)} className={location.pathname==='/carrito'    ? 'active' : ''}>🛒 Carrito</Link>
-        <Link to="/mis-compras"onClick={()=>setOpen(false)} className={location.pathname==='/mis-compras'? 'active' : ''}>🧾 Mis Compras</Link>
+        <Link to="/"            onClick={() => setOpen(false)} className={location.pathname === '/'             ? 'active' : ''}>Inicio</Link>
+        <Link to="/catalogo"    onClick={() => setOpen(false)} className={location.pathname.startsWith('/catalogo') ? 'active' : ''}>Catálogo</Link>
+        <Link to="/carrito"     onClick={() => setOpen(false)} className={location.pathname === '/carrito'     ? 'active' : ''}>🛒 Carrito</Link>
+        <Link to="/mis-compras" onClick={() => setOpen(false)} className={location.pathname === '/mis-compras' ? 'active' : ''}>🧾 Mis Compras</Link>
+
+        {/* Enlace de Monitoreo solo para monitor o admin */}
+        {isLoggedIn && (role === 'monitor' || role === 'admin') && (
+          <Link
+            to="/monitor"
+            onClick={() => setOpen(false)}
+            className={location.pathname === '/monitor' ? 'active' : ''}
+          >
+            Monitoreo
+          </Link>
+        )}
 
         {isLoggedIn && (
           <button
@@ -51,9 +66,9 @@ export default function Navbar() {
 
       <button
         className={`navbar__hamburger ${open ? 'open' : ''}`}
-        onClick={()=>setOpen(o=>!o)}
+        onClick={() => setOpen(o => !o)}
       >
-        <span/><span/><span/>
+        <span /><span /><span />
       </button>
     </header>
   );

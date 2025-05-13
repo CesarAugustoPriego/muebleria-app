@@ -2,7 +2,13 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-module.exports = (req, res, next) => {
+/**
+ * Middleware de autenticación:
+ * - Verifica que haya un header Authorization con formato "Bearer <token>"
+ * - Decodifica y valida el token
+ * - Anexa req.user = { id, rol }
+ */
+function requireAuth(req, res, next) {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     return res.status(401).json({ msg: 'No token provided' });
@@ -21,4 +27,6 @@ module.exports = (req, res, next) => {
   } catch (err) {
     return res.status(401).json({ msg: 'Invalid or expired token' });
   }
-};
+}
+
+module.exports = requireAuth;
