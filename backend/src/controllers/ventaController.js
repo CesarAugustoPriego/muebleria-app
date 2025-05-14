@@ -1,30 +1,28 @@
 // backend/src/controllers/ventaController.js
-const { Venta, VentaDetalle, Producto } = require('../models');
+const { Venta, VentaDetalle, Producto, ModeloMueble, Categoria } = require('../models');
 
 exports.listarVentas = async (req, res) => {
   try {
-    const userId = req.user.id;
-
     const ventas = await Venta.findAll({
-      where: { fk_usuario: userId },
+      where: { fk_usuario: req.user.id },
       order: [['fecha', 'DESC']],
-      include: [
-        {
-          model: VentaDetalle,
-          as: 'detallesVenta',       // coincide con Venta.hasMany(..., as: 'detallesVenta')
-          include: [
-            {
-              model: Producto,
-              as: 'productoVenta'    // coincide con VentaDetalle.belongsTo(Producto, as: 'productoVenta')
-            }
-          ]
-        }
-      ]
+      include: [{
+        model: VentaDetalle,
+        as: 'detallesVenta',
+        include: [{
+          model: Producto,
+          as: 'producto',
+          include: [{
+            model: ModeloMueble,
+            as: 'modelo',
+            include: [{ model: Categoria, as: 'categoria' }]
+          }]
+        }]
+      }]
     });
-
     return res.json(ventas);
-  } catch (e) {
-    console.error(e);
+  } catch (error) {
+    console.error('Error listarVentas:', error);
     return res.status(500).json({ msg: 'Error al listar ventas' });
   }
 };

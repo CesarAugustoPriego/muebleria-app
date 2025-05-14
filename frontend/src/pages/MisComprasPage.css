@@ -1,60 +1,52 @@
 .mis-compras-container {
-    padding: 40px 20px;
-    max-width: 900px;
-    margin: 0 auto;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
-  
-  .compra-card {
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    padding: 20px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-  }
-  
-  .compra-card h3 {
-    margin-bottom: 10px;
-    color: #333;
-  }
-  
-  .compra-card p {
-    margin: 8px 0;
-  }
-  
-  .productos {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-  }
-  
-  .producto {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-  }
-  
-  .producto img {
-    width: 80px;
-    height: 80px;
-    object-fit: cover;
-    border-radius: 8px;
-  }
-  
-  .producto-info h4 {
-    font-size: 1.1rem;
-    margin: 0;
-  }
-  
-  .producto-info p {
-    color: #555;
-  }
-  
-  .total {
-    font-weight: bold;
-    color: #1a202c;
-  }
-  
+  padding: 1rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.compra-card {
+  background: #fff;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.productos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.producto {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background: #f8f8f8;
+  padding: 0.75rem;
+  border-radius: 6px;
+  flex: 1 1 calc(50% - 1rem);
+}
+
+.producto img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.producto-info p {
+  margin: 0.25rem 0;
+}
+
+.total {
+  text-align: right;
+  font-weight: bold;
+  margin-top: 1rem;
+}
+
+.loading, .error {
+  text-align: center;
+  margin-top: 2rem;
+}

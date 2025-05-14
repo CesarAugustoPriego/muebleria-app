@@ -1,9 +1,9 @@
-// backend/src/index.js
 require('dotenv').config();
 const express   = require('express');
 const cors      = require('cors');
 const helmet    = require('helmet');
 const path      = require('path');
+const { crossOriginResourcePolicy } = require('helmet');
 const sequelize = require('./config/database');
 
 // Importa todas tus rutas
@@ -30,7 +30,7 @@ app.use(cors({
   allowedHeaders: ['Content-Type','Authorization']
 }));
 
-// 3) Seguridad con Helmet
+// 3) Seguridad con Helmet y política de recursos
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -43,6 +43,10 @@ app.use(helmet({
   },
   crossOriginEmbedderPolicy: false
 }));
+// Permitir la carga de recursos (imágenes) desde otros orígenes
+app.use(
+  crossOriginResourcePolicy({ policy: 'cross-origin' })
+);
 
 // 4) Sirve archivos estáticos de /uploads
 app.use(

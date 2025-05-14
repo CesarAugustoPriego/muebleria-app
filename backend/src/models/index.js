@@ -1,4 +1,3 @@
-// backend/src/models/index.js
 const sequelize        = require('../config/database');
 
 // Modelos
@@ -13,86 +12,50 @@ const CarritoDetalle   = require('./CarritoDetalle');
 const Venta            = require('./Venta');
 const VentaDetalle     = require('./VentaDetalle');
 
+// Asociaciones\ n
+// Usuario ↔ Carrito
+Usuario.hasMany(Carrito, { foreignKey: 'fk_usuario', as: 'carritos' });
+Carrito.belongsTo(Usuario,  { foreignKey: 'fk_usuario', as: 'usuario' });
 
-// ——— Usuario ↔ Carrito ———
-Usuario.hasMany(Carrito, {
-  foreignKey: 'fk_usuario',
-  as: 'carritos'
-});
-Carrito.belongsTo(Usuario, {
-  foreignKey: 'fk_usuario',
-  as: 'usuario'
-});
+// Carrito ↔ CarritoDetalle
+Carrito.hasMany(CarritoDetalle, { foreignKey: 'fk_carrito', as: 'detallesCarrito' });
+CarritoDetalle.belongsTo(Carrito, { foreignKey: 'fk_carrito', as: 'carrito' });
 
-// ——— Carrito ↔ CarritoDetalle ———
-Carrito.hasMany(CarritoDetalle, {
-  foreignKey: 'fk_carrito',
-  as: 'detallesCarrito'
-});
-CarritoDetalle.belongsTo(Carrito, {
-  foreignKey: 'fk_carrito',
-  as: 'carrito'
-});
+// Producto ↔ CarritoDetalle
+Producto.hasMany(CarritoDetalle, { foreignKey: 'fk_producto', as: 'entradasCarrito' });
+CarritoDetalle.belongsTo(Producto, { foreignKey: 'fk_producto', as: 'producto' });
 
-// ——— Producto ↔ CarritoDetalle ———
-Producto.hasMany(CarritoDetalle, {
-  foreignKey: 'fk_producto',
-  as: 'entradasCarrito'
-});
-CarritoDetalle.belongsTo(Producto, {
-  foreignKey: 'fk_producto',
-  as: 'producto'
-});
+// Usuario ↔ Dirección de Envío
+Usuario.hasMany(DireccionEnvio, { foreignKey: 'fk_usuario', as: 'direcciones' });
+DireccionEnvio.belongsTo(Usuario, { foreignKey: 'fk_usuario', as: 'usuarioDireccion' });
 
-// ——— Usuario ↔ Dirección de Envío ———
-Usuario.hasMany(DireccionEnvio, {
-  foreignKey: 'fk_usuario',
-  as: 'direcciones'
-});
-DireccionEnvio.belongsTo(Usuario, {
-  foreignKey: 'fk_usuario',
-  as: 'usuarioDireccion'
-});
+// Usuario ↔ Método de Pago
+Usuario.hasMany(MetodoPago, { foreignKey: 'fk_usuario', as: 'metodos' });
+MetodoPago.belongsTo(Usuario, { foreignKey: 'fk_usuario', as: 'usuarioMetodo' });
 
-// ——— Usuario ↔ Método de Pago ———
-Usuario.hasMany(MetodoPago, {
-  foreignKey: 'fk_usuario',
-  as: 'metodos'
-});
-MetodoPago.belongsTo(Usuario, {
-  foreignKey: 'fk_usuario',
-  as: 'usuarioMetodo'
-});
+// Usuario ↔ Venta
+Usuario.hasMany(Venta, { foreignKey: 'fk_usuario', as: 'ventas' });
+Venta.belongsTo(Usuario, { foreignKey: 'fk_usuario', as: 'usuarioVentas' });
 
-// ——— Venta ↔ VentaDetalle ———
-Venta.hasMany(VentaDetalle, {
-  foreignKey: 'fk_venta',
-  as: 'detallesVenta'
-});
-VentaDetalle.belongsTo(Venta, {
-  foreignKey: 'fk_venta',
-  as: 'ventaParent'
-});
+// Venta ↔ VentaDetalle
+Venta.hasMany(VentaDetalle, { foreignKey: 'fk_venta', as: 'detallesVenta' });
+VentaDetalle.belongsTo(Venta, { foreignKey: 'fk_venta', as: 'venta' });
 
-// ——— Producto ↔ VentaDetalle ———
-Producto.hasMany(VentaDetalle, {
-  foreignKey: 'fk_producto',
-  as: 'entradasVenta'
-});
-VentaDetalle.belongsTo(Producto, {
-  foreignKey: 'fk_producto',
-  as: 'productoVenta'
-});
+// Producto ↔ VentaDetalle
+Producto.hasMany(VentaDetalle, { foreignKey: 'fk_producto', as: 'entradasVenta' });
+VentaDetalle.belongsTo(Producto, { foreignKey: 'fk_producto', as: 'producto' });
 
-// (Opcional) ——— DirecciónEnvio ↔ Venta ———
-// si quieres poder acceder a la dirección de una venta, descomenta:
-// DireccionEnvio.hasMany(Venta, { foreignKey: 'fk_direccion_envio', as: 'ventas' });
-// Venta.belongsTo(DireccionEnvio, { foreignKey: 'fk_direccion_envio', as: 'direccionDeVenta' });
+// ModeloMueble ↔ Categoria
+Categoria.hasMany(ModeloMueble, { foreignKey: 'fk_categoria', as: 'modelos' });
+ModeloMueble.belongsTo(Categoria, { foreignKey: 'fk_categoria', as: 'categoria' });
 
-// (Opcional) ——— MetodoPago ↔ Venta ———
-// si quieres poder acceder al método de pago de una venta, descomenta:
-// MetodoPago.hasMany(Venta, { foreignKey: 'fk_metodo_pago', as: 'ventas' });
-// Venta.belongsTo(MetodoPago, { foreignKey: 'fk_metodo_pago', as: 'metodoDeVenta' });
+// ModeloMueble ↔ Producto
+ModeloMueble.hasMany(Producto, { foreignKey: 'fk_modelo', as: 'productos' });
+Producto.belongsTo(ModeloMueble, { foreignKey: 'fk_modelo', as: 'modelo' });
+
+// Categoria ↔ Producto
+Categoria.hasMany(Producto, { foreignKey: 'fk_categoria', as: 'productosByCategory' });
+Producto.belongsTo(Categoria, { foreignKey: 'fk_categoria', as: 'categoria' });
 
 module.exports = {
   sequelize,
