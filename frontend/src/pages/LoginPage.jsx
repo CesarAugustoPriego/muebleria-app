@@ -21,7 +21,6 @@ export default function LoginPage() {
     const usuario  = form.usuario.value;
     const password = form.password.value;
 
-    // Validación mínima
     if (!usuario || !password) {
       setError('Faltan campos');
       return;
@@ -31,17 +30,16 @@ export default function LoginPage() {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        // Envía user y password tal como lo lee tu authController
         body: JSON.stringify({ user: usuario, password })
       });
-
       const data = await res.json();
+
       if (!res.ok) {
         setError(data.msg || 'Credenciales inválidas');
         return;
       }
 
-      // 1) Actualiza el contexto de autenticación
+      // 1) Actualiza contexto y guarda token + rol
       login(data.token, { rol: data.rol, nombres: data.nombres });
 
       // 2) Limpia carrito y compras de sesiones anteriores
@@ -51,6 +49,8 @@ export default function LoginPage() {
       // 3) Redirige según rol
       if (data.rol === 'admin') {
         navigate('/admin/dashboard');
+      } else if (data.rol === 'monitor') {
+        navigate('/monitor');       // ← ruta para monitores
       } else {
         navigate('/');
       }
