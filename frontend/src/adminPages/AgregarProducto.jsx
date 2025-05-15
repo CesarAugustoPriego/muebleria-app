@@ -62,7 +62,7 @@ export default function AgregarProducto() {
     fd.append('fk_modelo', modeloSeleccionado);
     fd.append('imagen', form.imagen.files[0]);
 
-    const res = await fetch('/api/productos', { method: 'POST', body: fd });
+    const res = await fetch('/api/producto', { method: 'POST', body: fd });
     if (res.ok) {
       alert('✅ Producto agregado');
       form.reset();

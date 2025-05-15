@@ -35,7 +35,7 @@ export default function ModelPage() {
       return;
     }
     setLoading(true);
-    fetch(`${API}/productos/modelo/${modeloId}`)
+    fetch(`${API}/producto/modelo/${modeloId}`)
       .then(res => {
         if (!res.ok) throw new Error('No se pudieron cargar los productos');
         return res.json();

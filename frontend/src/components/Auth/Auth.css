@@ -40,7 +40,7 @@
 
 .login-form {
   display: flex;
-  flex-direction: column;
+  flex-direction: column;         
 }
 
 .registro-section {
@@ -49,14 +49,17 @@
 }
 
 .login-input {
-  padding: 14px 18px;
-  margin-bottom: 18px;
+   width: 100%;
+  box-sizing: border-box;
+  padding: 14px 25px;
+  margin-bottom: 20px;
   border: 1.5px solid #ddd;
   border-radius: 10px;
-  font-size: 16px;
+  font-size: 17px;
   transition: border 0.3s ease, box-shadow 0.3s ease;
   background-color: #f9f9f9;
 }
+
 
 .login-button {
   background: linear-gradient(135deg, #f97316, #ea580c);
@@ -109,13 +112,23 @@
   position: relative;
 }
 
+/*Ajuste de iconos*/ 
 .toggle-password {
   position: absolute;
-  right: 10px;
-  top: 8px;
+  top: 37%;
+  right: 25px;             /* a 16px del borde derecho del input */
+  transform: translateY(-50%);
   background: none;
   border: none;
-  color: #f60;
-  font-size: 0.9rem;
+  padding: 0;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-password svg {
+  width: 29px;             /* ancho del icono */
+  height: 32px;            /* alto del icono */
+  color: #f97316;          /* color naranja, igual que tu tema */
 }

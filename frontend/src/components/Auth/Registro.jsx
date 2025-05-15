@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import './Auth.css';
 import heroBackground from '../../assets/img/imghero-bg.png';
 import logo from '../../assets/img/Logo.png';
@@ -121,7 +122,10 @@ export default function Registro() {
               className="toggle-password"
               onClick={() => setMostrarPassword(prev => !prev)}
             >
-              {mostrarPassword ? 'Ocultar' : 'Ver'}
+              {mostrarPassword
+                ? <FaEyeSlash />
+                : <FaEye />
+              }
             </button>
           </div>
           {error.password && <span className="input-error">{error.password}</span>}

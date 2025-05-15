@@ -6,7 +6,7 @@ const ProductosAdmin = () => {
   const [productos, setProductos] = useState([]);
 
   const fetchProductos = async () => {
-    const res = await fetch('/api/productos');
+    const res = await fetch('/api/producto');
     const data = await res.json();
     setProductos(data);
   };
@@ -15,7 +15,7 @@ const ProductosAdmin = () => {
     const confirmar = window.confirm('¿Eliminar este producto?');
     if (!confirmar) return;
 
-    const res = await fetch(`/api/productos/${id}`, {
+    const res = await fetch(`/api/producto/${id}`, {
       method: 'DELETE'
     });
 

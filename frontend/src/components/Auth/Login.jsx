@@ -1,13 +1,15 @@
 // frontend/src/components/Auth/Login.jsx
 import React, { useState } from 'react';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import './Auth.css';
 import heroBackground from '../../assets/img/imghero-bg.png';
 import logo from '../../assets/img/Logo.png';
 
+
 export default function Login({ onSubmit, error }) {
   const [formData, setFormData] = useState({ usuario: '', password: '' });
-  const [errors, setErrors]     = useState({});
-  const [showPwd, setShowPwd]   = useState(false);
+  const [errors, setErrors] = useState({});
+  const [showPwd, setShowPwd] = useState(false);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -30,9 +32,9 @@ export default function Login({ onSubmit, error }) {
 
   return (
     <div className="login-container" style={{
-        backgroundImage: `url(${heroBackground})`,
-        backdropFilter: 'blur(5px)', WebkitBackdropFilter: 'blur(5px)'
-      }}>
+      backgroundImage: `url(${heroBackground})`,
+      backdropFilter: 'blur(5px)', WebkitBackdropFilter: 'blur(5px)'
+    }}>
       <div className="login-box">
         <div className="logo-container">
           <img src={logo} alt="Logo" className="logo" />
@@ -63,7 +65,10 @@ export default function Login({ onSubmit, error }) {
               className="toggle-password"
               onClick={() => setShowPwd(p => !p)}
             >
-              {showPwd ? 'Ocultar' : 'Ver'}
+              {showPwd
+                ? <FaEyeSlash  />
+                : <FaEye  />
+              }
             </button>
           </div>
           {errors.password && <span className="input-error">{errors.password}</span>}

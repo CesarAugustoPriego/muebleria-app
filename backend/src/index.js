@@ -58,7 +58,7 @@ app.use(
 
 // 6) Montar rutas de tu API
 app.use('/api/auth',       authRoutes);
-app.use('/api/productos',  productoRoutes);
+app.use('/api/producto',  productoRoutes);
 app.use('/api/carrito',    carritoRoutes);
 app.use('/api/direcciones',direccionRoutes);
 app.use('/api/metodos',    metodoRoutes);
