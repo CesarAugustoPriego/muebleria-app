@@ -28,7 +28,6 @@ async function obtenerCarritoActivo(usuarioId) {
 async function verCarrito(req, res) {
   try {
     const uid = req.user.id;
-    // Sólo buscamos el carrito del usuario
     const carrito = await Carrito.findOne({
       where: { fk_usuario: uid, estado: 'abierto' }
     });
@@ -53,8 +52,6 @@ async function agregarAlCarrito(req, res) {
   try {
     const uid = req.user.id;
     const { productoId, cantidad } = req.body;
-
-    // Sólo el carrito de este usuario
     const carrito = await obtenerCarritoActivo(uid);
 
     let detalle = await CarritoDetalle.findOne({
@@ -94,7 +91,6 @@ async function actualizarCantidad(req, res) {
       include: [{ model: Carrito, as: 'carrito' }]
     });
 
-    // Verificamos que exista y pertenezca al usuario
     if (!detalle || detalle.carrito.fk_usuario !== uid) {
       return res.status(404).json({ msg: 'Detalle no encontrado' });
     }
@@ -122,7 +118,7 @@ async function checkout(req, res) {
     const uid = req.user.id;
     const { direccionId, metodoId } = req.body;
 
-    // Buscamos sólo el carrito de este usuario
+    // 1) Carrito abierto
     const carrito = await Carrito.findOne({
       where: { fk_usuario: uid, estado: 'abierto' }
     });
@@ -131,6 +127,7 @@ async function checkout(req, res) {
       return res.status(400).json({ msg: 'No tienes un carrito activo' });
     }
 
+    // 2) Detalles
     const detalles = await CarritoDetalle.findAll({
       where: { fk_carrito: carrito.id }
     });
@@ -139,23 +136,22 @@ async function checkout(req, res) {
       return res.status(400).json({ msg: 'El carrito está vacío' });
     }
 
-    // Calcular total
+    // 3) Total
     const total = detalles.reduce(
       (sum, d) => sum + parseFloat(d.precio_unitario) * d.cantidad,
       0
     );
 
-    // Crear venta
+    // 4) Crear Venta (SIN estado para usar DEFAULT 'pedido')
     const venta = await Venta.create({
       fk_usuario:         uid,
       fk_direccion_envio: direccionId || null,
       fk_metodo_pago:     metodoId   || null,
       fecha:              new Date(),
-      total,
-      estado:             'pagado'
+      total
     }, { transaction: t });
 
-    // Detalles de la venta
+    // 5) Detalles de Venta
     for (const d of detalles) {
       await VentaDetalle.create({
         fk_venta:        venta.id,
@@ -166,7 +162,7 @@ async function checkout(req, res) {
       }, { transaction: t });
     }
 
-    // Cerramos carrito y lo limpiamos
+    // 6) Cerrar y limpiar carrito
     carrito.estado = 'cerrado';
     await carrito.save({ transaction: t });
     await CarritoDetalle.destroy({

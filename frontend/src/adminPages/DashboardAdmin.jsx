@@ -6,48 +6,72 @@ const API_BASE = 'http://localhost:4000/api';
 
 export default function DashboardAdmin() {
   const [compras, setCompras] = useState([]);
-  const [stats, setStats]     = useState({ mes:0, semana:0, ano:0 });
+  const [stats, setStats]     = useState({ mes: 0, semana: 0, ano: 0 });
   const token = localStorage.getItem('token');
 
+  // 1) Traer ventas
   useEffect(() => {
-    (async()=>{
+    (async () => {
       const res = await fetch(`${API_BASE}/ventas`, {
-        headers:{ Authorization:`Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
       setCompras(data);
     })();
-  },[token]);
+  }, [token]);
 
+  // 2) Calcular ingresos
   useEffect(() => {
     const hoy = new Date();
-    let mes=0, sem=0, ano=0;
+    let mes = 0, sem = 0, ano = 0;
     compras.forEach(c => {
-      const f = new Date(c.fecha), monto = parseFloat(c.total);
+      const f     = new Date(c.fecha),
+            monto = parseFloat(c.total);
       if (f.getFullYear() === hoy.getFullYear()) ano += monto;
       if (f.getMonth()    === hoy.getMonth())    mes += monto;
       if ((hoy - f)/(1000*60*60*24) <= 7)        sem += monto;
     });
-    setStats({ mes, semana:sem, ano });
-  },[compras]);
+    setStats({ mes, semana: sem, ano });
+  }, [compras]);
 
-  const actualizar = async (id, nuevo) => {
-    const res = await fetch(`${API_BASE}/ventas/${id}/estado`, {
-      method:'PUT',
-      headers:{
-        'Content-Type':'application/json',
-        Authorization:`Bearer ${token}`
-      },
-      body: JSON.stringify({ estado: nuevo })
-    });
-    const upd = await res.json();
-    setCompras(prev => prev.map(c => c.id===upd.id?upd:c));
+  // 3) Solo actualiza el UI al cambiar el select
+  const handleEstadoChange = (id, nuevoEstado) => {
+    setCompras(prev =>
+      prev.map(c =>
+        c.id === id
+          ? { ...c, estado: nuevoEstado }
+          : c
+      )
+    );
+  };
+
+  // 4) Envía el PUT al servidor SOLO al hacer clic en "Guardar"
+  const actualizar = async (id) => {
+    try {
+      const compra = compras.find(c => c.id === id);
+      const res = await fetch(`${API_BASE}/ventas/${id}/estado`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ estado: compra.estado })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        return alert(data.msg || 'Error actualizando estado');
+      }
+      alert('Estado actualizado correctamente');
+    } catch (e) {
+      console.error(e);
+      alert('Error al conectar con el servidor');
+    }
   };
 
   const opciones = [
-    { value:'pedido',     label:'Pedido' },
-    { value:'enviado',    label:'Enviado' },
-    { value:'en reparto', label:'En reparto' },
+    { value:'pedido',     label:'Pedido'    },
+    { value:'enviado',    label:'Enviado'   },
+    { value:'en reparto', label:'En reparto'},
     { value:'entregado',  label:'Entregado' }
   ];
 
@@ -65,7 +89,7 @@ export default function DashboardAdmin() {
       <table className="tabla-compras">
         <thead>
           <tr>
-            <th>ID</th><th>Usuari o</th><th>Fecha</th><th>Dirección</th>
+            <th>ID</th><th>Usuario</th><th>Fecha</th><th>Dirección</th>
             <th>Estado</th><th>Pago</th><th>Monto</th><th>Acción</th>
           </tr>
         </thead>
@@ -75,20 +99,33 @@ export default function DashboardAdmin() {
               <td>{c.id}</td>
               <td>{c.usuario.nombres} {c.usuario.apellidos}</td>
               <td>{new Date(c.fecha).toLocaleString()}</td>
-              <td>{c.direccionDeVenta? `${c.direccionDeVenta.calle}, ${c.direccionDeVenta.ciudad}`:'Recoger'}</td>
+              <td>
+                {c.direccionDeVenta
+                  ? `${c.direccionDeVenta.calle}, ${c.direccionDeVenta.ciudad}`
+                  : 'Recoger'}
+              </td>
               <td>
                 <select
                   value={c.estado}
-                  onChange={e=> actualizar(c.id, e.target.value)}
+                  onChange={e => handleEstadoChange(c.id, e.target.value)}
                 >
-                  {opciones.map(o=>(
-                    <option key={o.value} value={o.value}>{o.label}</option>
+                  {opciones.map(o => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}
+                    </option>
                   ))}
                 </select>
               </td>
               <td>{c.metodoDeVenta.tipo}</td>
               <td>${parseFloat(c.total).toFixed(2)}</td>
-              <td><button onClick={()=>actualizar(c.id,c.estado)}>Guardar</button></td>
+              <td>
+                <button
+                  className="btn btn-success"
+                  onClick={() => actualizar(c.id)}
+                >
+                  Guardar
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
