@@ -3,19 +3,15 @@ const express   = require('express');
 const cors      = require('cors');
 const helmet    = require('helmet');
 const path      = require('path');
-const { crossOriginResourcePolicy } = require('helmet');
 const sequelize = require('./config/database');
 
-// Importa todas tus rutas
-const authRoutes       = require('./routes/auth');
-const productoRoutes   = require('./routes/producto');
-const categoriaRoutes  = require('./routes/categoria');
-const modeloRoutes     = require('./routes/modelo');
-const carritoRoutes    = require('./routes/carrito');
-const direccionRoutes  = require('./routes/direccion');
-const metodoRoutes     = require('./routes/metodo');
-const ventaRoutes      = require('./routes/venta');
-const monitorRoutes    = require('./routes/monitor');
+const authRoutes      = require('./routes/auth');
+const productoRoutes  = require('./routes/producto');
+const carritoRoutes   = require('./routes/carrito');
+const direccionRoutes = require('./routes/direccion');
+const metodoRoutes    = require('./routes/metodo');
+const ventaRoutes     = require('./routes/venta');
+const monitorRoutes   = require('./routes/monitor');
 
 const app = express();
 
@@ -23,52 +19,54 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 2) CORS: solo desde tu React en http://localhost:3000
+// 2) Logging simple de todas las peticiones
+app.use((req, res, next) => {
+  console.log(`→ [${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next();
+});
+
+// 3) CORS general para tu frontend
 app.use(cors({
   origin: 'http://localhost:3000',
-  methods: ['GET','POST','PUT','DELETE'],
   allowedHeaders: ['Content-Type','Authorization']
 }));
 
-// 3) Seguridad con Helmet y política de recursos
+// 4) Helmet con CSP y permisos para recursos cross-origin
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc:  ["'self'", "'unsafe-inline'"],
-      styleSrc:   ["'self'", "'unsafe-inline'"],
-      imgSrc:     ["'self'", 'http://localhost:4000'],
-      connectSrc: ["'self'", 'http://localhost:3000', 'http://localhost:4000']
+      defaultSrc:   ["'self'"],
+      scriptSrc:    ["'self'", "'unsafe-inline'"],
+      styleSrc:     ["'self'", "'unsafe-inline'"],
+      imgSrc:       ["'self'", 'http://localhost:4000'],
+      connectSrc:   ["'self'", 'http://localhost:3000', 'http://localhost:4000']
     }
   },
-  crossOriginEmbedderPolicy: false
+  crossOriginEmbedderPolicy: false,
+  crossOriginResourcePolicy: { policy: 'cross-origin' }
 }));
-// Permitir la carga de recursos (imágenes) desde otros orígenes
-app.use(
-  crossOriginResourcePolicy({ policy: 'cross-origin' })
-);
 
-// 4) Sirve archivos estáticos de /uploads
+// 5) Servir /uploads con CORS abierto (para imágenes)
 app.use(
   '/uploads',
+  // permite que cualquier origen (frontend, Postman, etc.) consuma estas rutas
+  cors({ origin: '*' }),
   express.static(path.join(__dirname, '..', 'uploads'))
 );
 
-// 5) Monta tus rutas bajo /api
-app.use('/api/auth',        authRoutes);
-app.use('/api/productos',   productoRoutes);
-app.use('/api/categorias',  categoriaRoutes);
-app.use('/api/modelos',     modeloRoutes);
-app.use('/api/carrito',     carritoRoutes);
-app.use('/api/direcciones', direccionRoutes);
-app.use('/api/metodos',     metodoRoutes);
-app.use('/api/ventas',      ventaRoutes);
-app.use('/api/monitor',     monitorRoutes);
+// 6) Montar rutas de tu API
+app.use('/api/auth',       authRoutes);
+app.use('/api/productos',  productoRoutes);
+app.use('/api/carrito',    carritoRoutes);
+app.use('/api/direcciones',direccionRoutes);
+app.use('/api/metodos',    metodoRoutes);
+app.use('/api/ventas',     ventaRoutes);
+app.use('/api/monitor',    monitorRoutes);
 
-// 6) Ruta raíz de comprobación
+// 7) Ruta de comprobación
 app.get('/', (_, res) => res.send('API OK'));
 
-// 7) Conecta a la base de datos y levanta el servidor
+// 8) Conectar y levantar servidor
 sequelize.authenticate()
   .then(() => {
     console.log('✅ Conexión MySQL OK');

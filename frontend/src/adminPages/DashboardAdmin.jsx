@@ -1,166 +1,98 @@
 import React, { useState, useEffect } from 'react';
-import './DashboardAdmin.css';
 import Navbar from '../components/Auth/Navbar';
+import './DashboardAdmin.css';
 
-const DashboardAdmin = () => {
+const API_BASE = 'http://localhost:4000/api';
+
+export default function DashboardAdmin() {
   const [compras, setCompras] = useState([]);
-  const [ingresosMensuales, setIngresosMensuales] = useState(0);
-  const [ingresosSemanales, setIngresosSemanales] = useState(0);
-  const [ingresosAnuales, setIngresosAnuales] = useState(0);
+  const [stats, setStats]     = useState({ mes:0, semana:0, ano:0 });
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
-    const datosDeCompras = [
-      {
-        id: 1,
-        nombre: 'Sofá Moderno',
-        usuario: 'Juan Pérez',
-        fecha: '2025-05-01 14:30',
-        estado: 'Pedido',
-        metodoPago: 'Tarjeta de Crédito',
-        monto: 5000.0,
-        direccion: 'Calle Falsa 123, CDMX',
-      },
-      {
-        id: 2,
-        nombre: 'Librero Minimalista',
-        usuario: 'Ana García',
-        fecha: '2025-05-02 10:15',
-        estado: 'Enviado',
-        metodoPago: 'PayPal',
-        monto: 2500.0,
-        direccion: 'Recoger en tienda',
-      },
-      {
-        id: 3,
-        nombre: 'Mesa de Centro Estilo Vintage',
-        usuario: 'Carlos López',
-        fecha: '2025-04-15 09:45',
-        estado: 'Entregado',
-        metodoPago: 'Efectivo',
-        monto: 3500.0,
-        direccion: 'Av. Reforma 456, Monterrey',
-      },
-    ];
+    (async()=>{
+      const res = await fetch(`${API_BASE}/ventas`, {
+        headers:{ Authorization:`Bearer ${token}` }
+      });
+      const data = await res.json();
+      setCompras(data);
+    })();
+  },[token]);
 
-    setCompras(datosDeCompras);
-
+  useEffect(() => {
     const hoy = new Date();
-    const ingresosMensuales = datosDeCompras.filter(compra => {
-      const fechaCompra = new Date(compra.fecha);
-      return fechaCompra.getMonth() === hoy.getMonth() && fechaCompra.getFullYear() === hoy.getFullYear();
-    }).reduce((acc, compra) => acc + compra.monto, 0);
+    let mes=0, sem=0, ano=0;
+    compras.forEach(c => {
+      const f = new Date(c.fecha), monto = parseFloat(c.total);
+      if (f.getFullYear() === hoy.getFullYear()) ano += monto;
+      if (f.getMonth()    === hoy.getMonth())    mes += monto;
+      if ((hoy - f)/(1000*60*60*24) <= 7)        sem += monto;
+    });
+    setStats({ mes, semana:sem, ano });
+  },[compras]);
 
-    const ingresosSemanales = datosDeCompras.filter(compra => {
-      const fechaCompra = new Date(compra.fecha);
-      const diasDiferencia = (hoy - fechaCompra) / (1000 * 60 * 60 * 24);
-      return diasDiferencia <= 7;
-    }).reduce((acc, compra) => acc + compra.monto, 0);
-
-    const ingresosAnuales = datosDeCompras.filter(compra => {
-      const fechaCompra = new Date(compra.fecha);
-      return fechaCompra.getFullYear() === hoy.getFullYear();
-    }).reduce((acc, compra) => acc + compra.monto, 0);
-
-    setIngresosMensuales(ingresosMensuales);
-    setIngresosSemanales(ingresosSemanales);
-    setIngresosAnuales(ingresosAnuales);
-  }, []);
-
-  const cambiarEstado = (id, nuevoEstado) => {
-    const nuevasCompras = compras.map(compra =>
-      compra.id === id ? { ...compra, estado: nuevoEstado } : compra
-    );
-    setCompras(nuevasCompras);
+  const actualizar = async (id, nuevo) => {
+    const res = await fetch(`${API_BASE}/ventas/${id}/estado`, {
+      method:'PUT',
+      headers:{
+        'Content-Type':'application/json',
+        Authorization:`Bearer ${token}`
+      },
+      body: JSON.stringify({ estado: nuevo })
+    });
+    const upd = await res.json();
+    setCompras(prev => prev.map(c => c.id===upd.id?upd:c));
   };
+
+  const opciones = [
+    { value:'pedido',     label:'Pedido' },
+    { value:'enviado',    label:'Enviado' },
+    { value:'en reparto', label:'En reparto' },
+    { value:'entregado',  label:'Entregado' }
+  ];
 
   return (
     <div className="dashboard-admin">
-      <Navbar />
-      <div className="dashboard-container">
-        <h2>Dashboard del Administrador</h2>
+      <Navbar/>
+      <h2>Dashboard Admin</h2>
 
-        <div className="ingresos-container">
-          <h3>Ingresos</h3>
-          <div className="ingresos-cards">
-            <div className="ingresos-card">
-              <h4>Ingresos de Este Mes</h4>
-              <p>${ingresosMensuales.toFixed(2)}</p>
-            </div>
-            <div className="ingresos-card">
-              <h4>Ingresos de Esta Semana</h4>
-              <p>${ingresosSemanales.toFixed(2)}</p>
-            </div>
-            <div className="ingresos-card">
-              <h4>Ingresos del Año</h4>
-              <p>${ingresosAnuales.toFixed(2)}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="acciones-container">
-          <button
-            className="agregar-producto-btn"
-            onClick={() => window.location.href = '/admin/agregar-producto'}
-          >
-            Agregar Producto al Catálogo
-          </button>
-
-          <button
-            className="ver-productos-btn"
-            onClick={() => window.location.href = '/admin/productos'}
-          >
-            Ver Productos Existentes
-          </button>
-        </div>
-
-        <div className="compras-container">
-          <h3>Compras Realizadas</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Producto</th>
-                <th>Usuario</th>
-                <th>Fecha</th>
-                <th>Dirección de Entrega</th>
-                <th>Estado</th>
-                <th>Método de Pago</th>
-                <th>Monto</th>
-                <th>Acción</th>
-              </tr>
-            </thead>
-            <tbody>
-              {compras.map(compra => (
-                <tr key={compra.id}>
-                  <td>{compra.id}</td>
-                  <td>{compra.nombre}</td>
-                  <td>{compra.usuario}</td>
-                  <td>{compra.fecha}</td>
-                  <td>{compra.direccion}</td>
-                  <td>
-                    <select
-                      value={compra.estado}
-                      onChange={(e) => cambiarEstado(compra.id, e.target.value)}
-                    >
-                      <option value="Pedido">Pedido</option>
-                      <option value="Enviado">Enviado</option>
-                      <option value="En reparto">En reparto</option>
-                      <option value="Entregado">Entregado</option>
-                    </select>
-                  </td>
-                  <td>{compra.metodoPago}</td>
-                  <td>${compra.monto.toFixed(2)}</td>
-                  <td>
-                    <button onClick={() => alert(`Compra ${compra.id} actualizada`)}>Actualizar</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      <div className="ingresos-cards">
+        <div><h4>Mes</h4><p>${stats.mes.toFixed(2)}</p></div>
+        <div><h4>Semana</h4><p>${stats.semana.toFixed(2)}</p></div>
+        <div><h4>Año</h4><p>${stats.ano.toFixed(2)}</p></div>
       </div>
+
+      <table className="tabla-compras">
+        <thead>
+          <tr>
+            <th>ID</th><th>Usuari o</th><th>Fecha</th><th>Dirección</th>
+            <th>Estado</th><th>Pago</th><th>Monto</th><th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          {compras.map(c => (
+            <tr key={c.id}>
+              <td>{c.id}</td>
+              <td>{c.usuario.nombres} {c.usuario.apellidos}</td>
+              <td>{new Date(c.fecha).toLocaleString()}</td>
+              <td>{c.direccionDeVenta? `${c.direccionDeVenta.calle}, ${c.direccionDeVenta.ciudad}`:'Recoger'}</td>
+              <td>
+                <select
+                  value={c.estado}
+                  onChange={e=> actualizar(c.id, e.target.value)}
+                >
+                  {opciones.map(o=>(
+                    <option key={o.value} value={o.value}>{o.label}</option>
+                  ))}
+                </select>
+              </td>
+              <td>{c.metodoDeVenta.tipo}</td>
+              <td>${parseFloat(c.total).toFixed(2)}</td>
+              <td><button onClick={()=>actualizar(c.id,c.estado)}>Guardar</button></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
-};
-
-export default DashboardAdmin;
+}
