@@ -12,6 +12,8 @@ const direccionRoutes = require('./routes/direccion');
 const metodoRoutes    = require('./routes/metodo');
 const ventaRoutes     = require('./routes/venta');
 const monitorRoutes   = require('./routes/monitor');
+const categoriaRoutes = require('./routes/categoria');
+const modeloRoutes    = require('./routes/modelo');
 
 const app = express();
 
@@ -62,6 +64,8 @@ app.use('/api/direcciones',direccionRoutes);
 app.use('/api/metodos',    metodoRoutes);
 app.use('/api/ventas',     ventaRoutes);
 app.use('/api/monitor',    monitorRoutes);
+app.use('/api/categorias', categoriaRoutes);
+app.use('/api/modelos', modeloRoutes);
 
 // 7) Ruta de comprobación
 app.get('/', (_, res) => res.send('API OK'));
