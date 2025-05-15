@@ -9,7 +9,7 @@ export default function DashboardAdmin() {
   const [stats, setStats]     = useState({ mes: 0, semana: 0, ano: 0 });
   const token = localStorage.getItem('token');
 
-  // 1) Traer ventas
+  // 1) Traer ventas al montar
   useEffect(() => {
     (async () => {
       const res = await fetch(`${API_BASE}/ventas`, {
@@ -20,33 +20,31 @@ export default function DashboardAdmin() {
     })();
   }, [token]);
 
-  // 2) Calcular ingresos
+  // 2) Calcular estadísticas cuando cambian las compras
   useEffect(() => {
     const hoy = new Date();
     let mes = 0, sem = 0, ano = 0;
+
     compras.forEach(c => {
       const f     = new Date(c.fecha),
-            monto = parseFloat(c.total);
-      if (f.getFullYear() === hoy.getFullYear()) ano += monto;
-      if (f.getMonth()    === hoy.getMonth())    mes += monto;
-      if ((hoy - f)/(1000*60*60*24) <= 7)        sem += monto;
+            total = parseFloat(c.total);
+      if (f.getFullYear() === hoy.getFullYear()) ano += total;
+      if (f.getMonth()    === hoy.getMonth())    mes += total;
+      if ((hoy - f) / (1000 * 60 * 60 * 24) <= 7) sem += total;
     });
+
     setStats({ mes, semana: sem, ano });
   }, [compras]);
 
-  // 3) Solo actualiza el UI al cambiar el select
-  const handleEstadoChange = (id, nuevoEstado) => {
+  // 3) Solo actualiza UI al cambiar el select
+  const handleEstadoChange = (id, nuevo) => {
     setCompras(prev =>
-      prev.map(c =>
-        c.id === id
-          ? { ...c, estado: nuevoEstado }
-          : c
-      )
+      prev.map(c => c.id === id ? { ...c, estado: nuevo } : c)
     );
   };
 
-  // 4) Envía el PUT al servidor SOLO al hacer clic en "Guardar"
-  const actualizar = async (id) => {
+  // 4) Guarda el estado en el servidor al clicar “Guardar”
+  const guardarEstado = async (id) => {
     try {
       const compra = compras.find(c => c.id === id);
       const res = await fetch(`${API_BASE}/ventas/${id}/estado`, {
@@ -57,10 +55,8 @@ export default function DashboardAdmin() {
         },
         body: JSON.stringify({ estado: compra.estado })
       });
-      const data = await res.json();
-      if (!res.ok) {
-        return alert(data.msg || 'Error actualizando estado');
-      }
+      const json = await res.json();
+      if (!res.ok) return alert(json.msg || 'Error actualizando estado');
       alert('Estado actualizado correctamente');
     } catch (e) {
       console.error(e);
@@ -69,15 +65,32 @@ export default function DashboardAdmin() {
   };
 
   const opciones = [
-    { value:'pedido',     label:'Pedido'    },
-    { value:'enviado',    label:'Enviado'   },
-    { value:'en reparto', label:'En reparto'},
-    { value:'entregado',  label:'Entregado' }
+    { value: 'pedido',     label: 'Pedido'    },
+    { value: 'enviado',    label: 'Enviado'   },
+    { value: 'en reparto', label: 'En reparto'},
+    { value: 'entregado',  label: 'Entregado' }
   ];
 
   return (
     <div className="dashboard-admin">
-      <Navbar/>
+      <Navbar />
+
+      {/* Botones de acción */}
+      <div className="acciones-container" style={{ margin: '1rem 0', display: 'flex', gap: '1rem' }}>
+        <button
+          className="btn btn-primary"
+          onClick={() => window.location.href = '/admin/agregar-producto'}
+        >
+          Agregar Producto al Catálogo
+        </button>
+        <button
+          className="btn btn-secondary"
+          onClick={() => window.location.href = '/admin/productos'}
+        >
+          Ver Productos Existentes
+        </button>
+      </div>
+
       <h2>Dashboard Admin</h2>
 
       <div className="ingresos-cards">
@@ -89,8 +102,14 @@ export default function DashboardAdmin() {
       <table className="tabla-compras">
         <thead>
           <tr>
-            <th>ID</th><th>Usuario</th><th>Fecha</th><th>Dirección</th>
-            <th>Estado</th><th>Pago</th><th>Monto</th><th>Acción</th>
+            <th>ID</th>
+            <th>Usuario</th>
+            <th>Fecha</th>
+            <th>Dirección</th>
+            <th>Estado</th>
+            <th>Pago</th>
+            <th>Monto</th>
+            <th>Acción</th>
           </tr>
         </thead>
         <tbody>
@@ -110,9 +129,7 @@ export default function DashboardAdmin() {
                   onChange={e => handleEstadoChange(c.id, e.target.value)}
                 >
                   {opciones.map(o => (
-                    <option key={o.value} value={o.value}>
-                      {o.label}
-                    </option>
+                    <option key={o.value} value={o.value}>{o.label}</option>
                   ))}
                 </select>
               </td>
@@ -121,7 +138,7 @@ export default function DashboardAdmin() {
               <td>
                 <button
                   className="btn btn-success"
-                  onClick={() => actualizar(c.id)}
+                  onClick={() => guardarEstado(c.id)}
                 >
                   Guardar
                 </button>
