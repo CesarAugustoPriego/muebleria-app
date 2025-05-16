@@ -210,6 +210,15 @@ html {
   color: #FF7F00;
 }
 
+.destacados-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 2.5rem;
+  justify-items: center;
+  margin-top: 2rem;
+}
+
+
 /* — Testimonios — */
 .testimonios .cards {
   display: flex;

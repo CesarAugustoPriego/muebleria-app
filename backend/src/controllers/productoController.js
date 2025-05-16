@@ -2,6 +2,8 @@
 const path = require('path');
 const fs = require('fs');
 const Producto = require('../models/Producto');
+const { sequelize } = require ('../models');
+const { QueryTypes } = require ('sequelize');
 
 /**
  * POST /api/productos
@@ -90,5 +92,22 @@ exports.getProductosPorModelo = async (req, res) => {
   } catch (err) {
     console.error('Error al obtener productos por modelo:', err);
     res.status(500).json({ msg: 'Error al obtener productos por modelo' });
+  }
+};
+
+/**
+ * GET /api/productos/top-vendidos
+ * Obtiene los 3 productos más vendidos usando la vista top_vendidos.
+ */
+exports.obtenerTopVendidos = async (_req, res) => {
+  try {
+    const top = await sequelize.query(
+      'SELECT * FROM top_vendidos',
+      { type: QueryTypes.SELECT }
+    );
+    res.json(top);
+  } catch (err) {
+    console.error('Error al obtener top vendidos:', err);
+    res.status(500).json({ msg: 'Error al obtener productos más vendidos' });
   }
 };
