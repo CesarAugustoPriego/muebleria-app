@@ -54,15 +54,15 @@ const HomePage = () => {
 
 
       {/* seccion prodctos destacadosS */}
-      <div style={{ width: '100%', textAlign: 'center', padding: '60px 20px', backgroundColor: '#F5F5F5' }} id="productos">
+      <div style={{ width: '96.7%', textAlign: 'center', padding: '60px 20px', backgroundColor: '#F5F5F5' }} id="productos">
         {/* Solo el título "Productos destacados" centrado */}
         <h2 style={{
           textAlign: 'center',
           display: 'block',
           width: '100%',
-          fontSize: '2rem',
+          fontSize: '2rem',//Tamaño de letra
           fontWeight: 'bold',
-          marginBottom: '2rem',
+          marginBottom: '1rem',
           color: '#333'
         }}>
           Productos destacados
