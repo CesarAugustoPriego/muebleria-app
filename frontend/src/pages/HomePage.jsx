@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Auth/Navbar';
+import { categorias } from '../data/catalogData';
 import './HomePage.css';
 import heroBg from '../assets/img/imghero-bg.png';
 import sofaImg from '../assets/img/sofa1.jpg';
@@ -36,14 +37,21 @@ const HomePage = () => {
       </header>
 
       <section id="tipos" className="section tipos">
-        <h2>Tipos de Mueble</h2>
+        <h2>Categorias Disponibles</h2>
         <div className="cards">
-          <div className="card"><h3>Sala</h3></div>
-          <div className="card"><h3>Comedor</h3></div>
-          <div className="card"><h3>Recámara y estudio</h3></div>
-          <div className="card"><h3>Cocina</h3></div>
+          {categorias.map(cat => (
+            <Link
+              key={cat.id}
+              to={cat.items[0].path.replace(/\/catalogo/, '/catalogo')}
+              /* Ajusta aquí tu prefijo de ruta: ej "/catalogo/recamara" */
+              className="card card-link"
+            >
+              <h3>{cat.nombre}</h3>
+            </Link>
+          ))}
         </div>
       </section>
+
 
       {/* seccion prodctos destacadosS */}
       <div style={{ width: '100%', textAlign: 'center', padding: '60px 20px', backgroundColor: '#F5F5F5' }} id="productos">

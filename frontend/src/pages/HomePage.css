@@ -165,24 +165,6 @@ html {
   color: #333;
 }
 
-/* — “Tipos de Mueble” cards — */
-.tipos .cards {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 1.5rem;
-}
-.card {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 10px;
-  width: 200px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-}
-.card h3 {
-  margin: 0;
-  color: #FF7F00;
-}
 
 /* — Productos Destacados — */
 #productos {
@@ -307,3 +289,57 @@ html {
   text-transform: uppercase;
 }
 
+/* Tipos de mueble. */
+
+/* Contenedor de tarjetas */
+.section.tipos .cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+/* Tarjeta básica */
+.section.tipos .card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 1rem 1.5rem;
+  min-width: 190px;       /* ancho mínimo */
+  max-width: 200px;       /* ancho máximo */
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+  color: #333;            /* color del texto */
+}
+
+/* Hover/Focus */
+.section.tipos .card:hover,
+.section.tipos .card:focus {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+/* Enlace completo en la tarjeta */
+.section.tipos .card-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* El título dentro de la tarjeta */
+.section.tipos .card h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #ff6600;         /* puede ir tu color naranja */
+}
+
+/* Responsive: en móviles, una columna */
+@media (max-width: 480px) {
+  .section.tipos .cards {
+    flex-direction: column;
+    align-items: center;
+  }
+  .section.tipos .card {
+    max-width: 90%;
+  }
+}
