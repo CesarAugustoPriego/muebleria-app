@@ -86,7 +86,7 @@ export default function HomePage() {
               </>
             ) : (
               <p className="hero-welcome-text">
-                Bienvenido {displayName}
+                Bienvenid@ {displayName}
               </p>
             )}
           </div>

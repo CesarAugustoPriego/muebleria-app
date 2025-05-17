@@ -341,3 +341,21 @@ html {
   border: none;
 }
 
+/* — Estilo moderno para el saludo — */
+.hero-welcome-text {
+  display: block;                         /* para que esté en su propia línea */
+  margin: 1.5rem 0 0;
+  font-family: 'Poppins', sans-serif;     /* fuerza Poppins solo en este elemento */
+  font-weight: 400;
+  font-size: clamp(1.2rem, 3vw, 2rem);
+  letter-spacing: 0.05em;
+  
+  color: #FF7F00;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+.hero-welcome-text {
+  background: linear-gradient(90deg, #FF7F00, #FFC34D);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
