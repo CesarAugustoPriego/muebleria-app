@@ -20,8 +20,8 @@ export default function LoginPage() {
   const handleLogin = async e => {
     e.preventDefault();
     const form     = e.target;
-    const usuario  = form.usuario.value;
-    const password = form.password.value;
+    const usuario  = form.usuario.value.trim();
+    const password = form.password.value.trim();
 
     if (!usuario || !password) {
       setError('Faltan campos');
@@ -29,36 +29,45 @@ export default function LoginPage() {
     }
 
     try {
+      // 1) Autenticación: obtenemos sólo el token
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ user: usuario, password })
       });
       const data = await res.json();
-
       if (!res.ok) {
         setError(data.msg || 'Credenciales inválidas');
         return;
       }
 
-      // 1) Actualiza contexto y guarda token + rol
-      login(data.token, { rol: data.rol, nombres: data.nombres });
+      // 2) Cargamos el perfil completo desde el backend
+      const perfilRes = await fetch('/api/usuario/perfil', {
+        headers: { Authorization: `Bearer ${data.token}` }
+      });
+      const perfil = await perfilRes.json();
+      if (!perfilRes.ok) {
+        throw new Error(perfil.msg || 'Error al cargar perfil');
+      }
 
-      // 2) Limpia carrito y compras de sesiones anteriores
+      // 3) Guardamos token + perfil en el contexto (y localStorage)
+      login(data.token, perfil);
+
+      // 4) Limpiamos carrito y compras de otras sesiones
       clearCart();
       clearPurchases();
 
-      // 3) Redirige según rol
-      if (data.rol === 'admin') {
+      // 5) Redirigimos según rol
+      if (perfil.rol === 'admin') {
         navigate('/admin/dashboard');
-      } else if (data.rol === 'monitor') {
+      } else if (perfil.rol === 'monitor') {
         navigate('/monitor');
       } else {
         navigate('/');
       }
     } catch (err) {
       console.error(err);
-      setError('Error de conexión con el servidor');
+      setError(err.message || 'Error de conexión con el servidor');
     }
   };
 

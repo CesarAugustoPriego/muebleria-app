@@ -70,6 +70,7 @@ app.use('/api/monitor',    monitorRoutes);
 app.use('/api/categorias', categoriaRoutes);
 app.use('/api/modelos', modeloRoutes);
 app.use('/api/auditoria', require('./routes/auditoria'));
+app.use('/api/usuario', require('./routes/usuario'));
 
 
 // 7) Ruta de comprobación

@@ -328,3 +328,16 @@ html {
     max-width: 1200px;
   }
 */
+
+/* — Saludo simple en el hero — */
+.hero-welcome-text {
+  margin: 1.5rem 0 0;
+  background: none;
+  color: rgb(255, 115, 0);
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  font-weight: 500;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+  box-shadow: none;
+  border: none;
+}
+

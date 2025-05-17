@@ -10,7 +10,9 @@ import heroBg from '../assets/img/imghero-bg.png';
 export default function HomePage() {
   const [navOpen, setNavOpen] = useState(false);
   const toggleNav = () => setNavOpen(o => !o);
-  const { token } = useContext(AuthContext);
+
+  // Extraemos token, user y logout de AuthContext
+  const { token, user, logout } = useContext(AuthContext);
 
   const [topProducts, setTopProducts] = useState([]);
   const [loadingTop, setLoadingTop] = useState(true);
@@ -25,14 +27,17 @@ export default function HomePage() {
         if (!res.ok) throw new Error('No se pudieron cargar los productos más vendidos');
         return res.json();
       })
-      .then(data => setTopProducts(data))
+      .then(setTopProducts)
       .catch(err => setErrorTop(err.message))
       .finally(() => setLoadingTop(false));
   }, [token]);
 
   // 2) Función para agregar al carrito
   const addToCart = async id => {
-    if (!token) return alert('🔒 Debes iniciar sesión primero');
+    if (!token) {
+      alert('🔒 Debes iniciar sesión primero');
+      return;
+    }
     try {
       const res = await fetch('http://localhost:4000/api/carrito/agregar', {
         method: 'POST',
@@ -50,6 +55,11 @@ export default function HomePage() {
     }
   };
 
+  // Determina qué nombre mostrar: username o nombres + apellidos
+  const displayName = user
+    ? (user.username || `${user.nombres} ${user.apellidos}`).trim()
+    : '';
+
   return (
     <div className={`homepage ${navOpen ? 'with-nav-open' : ''}`}>
       <Navbar toggleNav={toggleNav} navOpen={navOpen} />
@@ -63,9 +73,22 @@ export default function HomePage() {
         <div className="hero-content">
           <h1 className="hero-title">Mueblerías Danny</h1>
           <p className="hero-subtitle">Calidad, confort y diseño para tu hogar</p>
+
           <div className="hero-buttons">
-            <Link to="/login" className="btn primary">Iniciar Sesión</Link>
-            <Link to="/registro" className="btn outline">Registrarse</Link>
+            {!token ? (
+              <>
+                <Link to="/login" className="btn primary">
+                  Iniciar Sesión
+                </Link>
+                <Link to="/registro" className="btn outline">
+                  Registrarse
+                </Link>
+              </>
+            ) : (
+              <p className="hero-welcome-text">
+                Bienvenido {displayName}
+              </p>
+            )}
           </div>
         </div>
       </header>
@@ -78,7 +101,6 @@ export default function HomePage() {
             <Link
               key={cat.id}
               to={cat.items[0].path.replace(/\/catalogo/, '/catalogo')}
-              /* Ajusta aquí tu prefijo de ruta: ej "/catalogo/recamara" */
               className="card card-link"
             >
               <h3>{cat.nombre}</h3>
@@ -91,7 +113,8 @@ export default function HomePage() {
       <section id="productos" className="section destacados">
         <h2>Productos más vendidos</h2>
         {loadingTop && <p>Cargando productos más vendidos…</p>}
-        {errorTop && <p className="text-red-600">{errorTop}</p>}
+        {errorTop && <p className="error">{errorTop}</p>}
+
         <div className="destacados-grid">
           {topProducts.map(p => (
             <div className="product-card" key={p.id}>
@@ -134,7 +157,9 @@ export default function HomePage() {
           <input type="text" placeholder="Nombre" required />
           <input type="email" placeholder="Correo electrónico" required />
           <textarea placeholder="Mensaje" rows="4" required />
-          <button type="submit" className="btn primary">Enviar</button>
+          <button type="submit" className="btn primary">
+            Enviar
+          </button>
         </form>
       </section>
 
