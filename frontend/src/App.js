@@ -1,5 +1,3 @@
-// frontend/src/App.js
-
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
@@ -16,8 +14,8 @@ import DashboardAdmin   from './adminPages/DashboardAdmin';
 import ProductosAdmin   from './adminPages/ProductosAdmin';
 
 import MonitorPage      from './monitorPages/MonitorPage';
-import AuditoriaPage from './monitorPages/AuditoriaPage';
-import PrivateRoute from './routes/PrivateRoute';
+import AuditoriaPage    from './monitorPages/AuditoriaPage';
+import PrivateRoute     from './routes/PrivateRoute';
 
 function App() {
   return (
@@ -29,25 +27,25 @@ function App() {
         <Route path="/registro" element={<RegistroPage />} />
         <Route path="/"         element={<HomePage />} />
 
-        {/* Catálogo y modelos */}
-        <Route path="/catalogo"                    element={<CatalogPage />} />
-        <Route path="/catalogo/:categoria/:modelo" element={<ModelPage />} />
+        {/* Rutas protegidas para CLIENTE */}
+        <Route element={<PrivateRoute allowedRoles={['cliente']} />}>
+          <Route path="/catalogo"                    element={<CatalogPage />} />
+          <Route path="/catalogo/:categoria/:modelo" element={<ModelPage />} />
+          <Route path="/carrito"                     element={<CarritoPage />} />
+          <Route path="/mis-compras"                 element={<MisComprasPage />} />
+        </Route>
 
-        {/* Carrito y compras */}
-        <Route path="/carrito"     element={<CarritoPage />} />
-        <Route path="/mis-compras" element={<MisComprasPage />} />
-
-        {/* Rutas protegidas (solo admin) */}
-        <Route element={<PrivateRoute allowedRoles={[ 'admin' ]} />}>
+        {/* Rutas protegidas para ADMIN */}
+        <Route element={<PrivateRoute allowedRoles={['admin']} />}>
           <Route path="/admin/agregar-producto" element={<AgregarProducto />} />
           <Route path="/admin/dashboard"        element={<DashboardAdmin />} />
           <Route path="/admin/productos"        element={<ProductosAdmin />} />
         </Route>
 
-        {/* Ruta protegida para monitoreo (monitor o admin) */}
-        <Route element={<PrivateRoute allowedRoles={[ 'monitor', 'admin' ]} />}>
-          <Route path="/monitor" element={<MonitorPage />} />
-          <Route path="/auditoria" element={<AuditoriaPage />} />
+        {/* Rutas protegidas para MONITOR */}
+        <Route element={<PrivateRoute allowedRoles={['monitor']} />}>
+          <Route path="/monitor"    element={<MonitorPage />} />
+          <Route path="/auditoria"  element={<AuditoriaPage />} />
         </Route>
 
         {/* Ruta catch-all: redirigir a home */}

@@ -1,30 +1,29 @@
-// backend/src/routes/producto.js
 const express = require('express');
 const upload = require('../middleware/upload');
+const auth = require('../middleware/auth');
 const {
   crearProducto,
   obtenerProductos,
   eliminarProducto,
-  getProductosPorModelo,  // importamos la nueva función
+  getProductosPorModelo,
   obtenerTopVendidos
 } = require('../controllers/productoController');
 
 const router = express.Router();
 
-// Crear producto con imagen
-router.post('/', upload.single('imagen'), crearProducto);
+// Crear producto con imagen - requiere autenticación y, idealmente, rol admin
+router.post('/', auth, upload.single('imagen'), crearProducto);
 
-// Listar todos los productos
+// Listar todos los productos - pública o protegida según necesidad
 router.get('/', obtenerProductos);
 
-// Listar productos de un modelo concreto
-// Ejemplo: GET /api/productos/modelo/3
+// Listar productos de un modelo concreto - pública
 router.get('/modelo/:modeloId', getProductosPorModelo);
 
-//Lista de los 3 productos mas vendidos
+// Lista de los 3 productos más vendidos - pública
 router.get('/top-vendidos', obtenerTopVendidos);
 
-// Eliminar producto por ID
-router.delete('/:id', eliminarProducto);
+// Eliminar producto por ID - requiere autenticación y, idealmente, rol admin
+router.delete('/:id', auth, eliminarProducto);
 
 module.exports = router;

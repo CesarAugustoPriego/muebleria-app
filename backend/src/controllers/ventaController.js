@@ -1,3 +1,4 @@
+// backend/src/controllers/ventaController.js
 const Venta           = require('../models/Venta');
 const VentaDetalle    = require('../models/VentaDetalle');
 const Producto        = require('../models/Producto');
@@ -13,6 +14,7 @@ const estadosPermitidos = ['pedido','enviado','en reparto','entregado'];
 exports.listarVentas = async (req, res) => {
   try {
     const where = {};
+    // Solo si NO es admin, filtra para mostrar solo sus ventas
     if (req.user.rol !== 'admin') {
       where.fk_usuario = req.user.id;
     }

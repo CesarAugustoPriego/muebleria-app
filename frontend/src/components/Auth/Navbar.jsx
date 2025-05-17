@@ -1,4 +1,3 @@
-// frontend/src/components/Navbar.jsx
 import React, { useState, useContext } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Navbar.css';
@@ -17,7 +16,6 @@ export default function Navbar() {
   const { clearCart }     = useContext(CartContext);
   const { clearPurchases }= useContext(PurchaseContext);
 
-  // Obtener rol desde AuthContext o localStorage
   const role = useContext(AuthContext).user?.rol || localStorage.getItem('rol');
 
   const isLoggedIn = Boolean(token);
@@ -37,51 +35,36 @@ export default function Navbar() {
       </div>
 
       <nav className={`navbar__links ${open ? 'open' : ''}`}>
-        <Link to="/"            onClick={() => setOpen(false)} className={location.pathname === '/'             ? 'active' : ''}>Inicio</Link>
-        <Link to="/catalogo"    onClick={() => setOpen(false)} className={location.pathname.startsWith('/catalogo') ? 'active' : ''}>Catálogo</Link>
-        <Link to="/carrito"     onClick={() => setOpen(false)} className={location.pathname === '/carrito'     ? 'active' : ''}>🛒 Carrito</Link>
-        <Link to="/mis-compras" onClick={() => setOpen(false)} className={location.pathname === '/mis-compras' ? 'active' : ''}>🧾 Mis Compras</Link>
-
-        {/* Enlace de Monitoreo solo para monitor */}
-        {isLoggedIn && role === 'monitor' && (
-          <Link
-            to="/monitor"
-            onClick={() => setOpen(false)}
-            className={location.pathname === '/monitor' ? 'active' : ''}
-          >
-            Monitoreo
-          </Link>
+        {/* Links para CLIENTE */}
+        {isLoggedIn && role === 'cliente' && (
+          <>
+            <Link to="/"            onClick={() => setOpen(false)} className={location.pathname === '/' ? 'active' : ''}>Inicio</Link>
+            <Link to="/catalogo"    onClick={() => setOpen(false)} className={location.pathname.startsWith('/catalogo') ? 'active' : ''}>Catálogo</Link>
+            <Link to="/carrito"     onClick={() => setOpen(false)} className={location.pathname === '/carrito' ? 'active' : ''}>🛒 Carrito</Link>
+            <Link to="/mis-compras" onClick={() => setOpen(false)} className={location.pathname === '/mis-compras' ? 'active' : ''}>🧾 Mis Compras</Link>
+          </>
         )}
 
-        {/* Enlace de Auditoría solo para monitor */}
-        {isLoggedIn && role === 'monitor' && (
-          <Link
-            to="/auditoria"
-            onClick={() => setOpen(false)}
-            className={location.pathname === '/auditoria' ? 'active' : ''}
-          >
-            Auditoría
-          </Link>
-        )}
-
-        {/* Enlace Dashboard Admin solo para admin */}
+        {/* Links para ADMIN */}
         {isLoggedIn && role === 'admin' && (
-          <Link
-            to="/admin/dashboard"
-            onClick={() => setOpen(false)}
-            className={location.pathname === '/admin/dashboard' ? 'active' : ''}
-          >
-            Dashboard Admin
-          </Link>
+          <>
+            <Link to="/admin/dashboard" onClick={() => setOpen(false)} className={location.pathname === '/admin/dashboard' ? 'active' : ''}>Dashboard Admin</Link>
+            <Link to="/admin/agregar-producto" onClick={() => setOpen(false)} className={location.pathname === '/admin/agregar-producto' ? 'active' : ''}>Agregar Producto</Link>
+            <Link to="/admin/productos" onClick={() => setOpen(false)} className={location.pathname === '/admin/productos' ? 'active' : ''}>Productos</Link>
+          </>
         )}
 
+        {/* Links para MONITOR */}
+        {isLoggedIn && role === 'monitor' && (
+          <>
+            <Link to="/monitor" onClick={() => setOpen(false)} className={location.pathname === '/monitor' ? 'active' : ''}>Monitoreo</Link>
+            <Link to="/auditoria" onClick={() => setOpen(false)} className={location.pathname === '/auditoria' ? 'active' : ''}>Auditoría</Link>
+          </>
+        )}
+
+        {/* Botón Cerrar Sesión para todos */}
         {isLoggedIn && (
-          <button
-            onClick={handleLogout}
-            className="navbar__logout"
-          >
-            Cerrar Sesión
-          </button>
+          <button onClick={handleLogout} className="navbar__logout">Cerrar Sesión</button>
         )}
       </nav>
 

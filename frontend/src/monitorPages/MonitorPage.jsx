@@ -19,7 +19,6 @@ ChartJS.register(
   PointElement
 );
 
-// Función para formato de tiempo en hh:mm:ss
 function formatTime(s) {
   const hrs = Math.floor(s / 3600);
   const min = Math.floor((s % 3600) / 60);
@@ -32,7 +31,12 @@ export default function MonitorPage() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('http://localhost:4000/api/monitor')
+    const token = localStorage.getItem('token');
+    fetch('http://localhost:4000/api/monitor', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then(res => {
         if (!res.ok) throw new Error(`Error ${res.status}`);
         return res.json();
@@ -49,7 +53,7 @@ export default function MonitorPage() {
       <Navbar />
       <div className="monitor-container" style={{ marginTop: '60px' }}>
         <h1>Dashboard de Monitoreo MySQL y Mueblería</h1>
-
+        {/* Aquí va el resto del contenido y gráficos */}
         <div className="cards">
           <div className="card">
             <strong>{data.threadsConnected}</strong>

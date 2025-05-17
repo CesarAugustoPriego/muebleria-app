@@ -2,21 +2,21 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 
-export default function PrivateRoute({ allowedRoles = [] }) {
-  // Obtener token y rol desde localStorage
+export default function PrivateRoute({ allowedRoles }) {
+  // Obtener token y rol del usuario desde localStorage o contexto
   const token = localStorage.getItem('token');
-  const rol   = localStorage.getItem('rol');
+  const rol = localStorage.getItem('rol'); // O obtener del contexto AuthContext si tienes
 
-  // Si no hay token, redirigir a login
   if (!token) {
+    // No autenticado, redirige a login
     return <Navigate to="/login" replace />;
   }
 
-  // Si el rol no está en la lista de permitidos, redirigir a home
   if (!allowedRoles.includes(rol)) {
+    // No autorizado para esta ruta, redirige a home o a una página de "No autorizado"
     return <Navigate to="/" replace />;
   }
 
-  // Si pasa todas las validaciones, renderizar las rutas hijas
+  // Usuario autenticado y autorizado, renderizar componente hijo(s)
   return <Outlet />;
 }

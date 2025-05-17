@@ -1,10 +1,15 @@
-// backend/src/routes/monitor.js
 const express = require('express');
 const router  = express.Router();
+const auth = require('../middleware/auth');
 const { getMonitorData } = require('../controllers/monitorController');
 
-// Ya no aplicamos requireAuth ni requireMonitorRole aquí,
-// solo devolvemos las métricas directamente.
-router.get('/', getMonitorData);
+function soloMonitor(req, res, next) {
+  if (req.user && req.user.rol === 'monitor') {
+    return next();
+  }
+  return res.status(403).json({ msg: 'Acceso restringido solo para monitor' });
+}
+
+router.get('/', auth, soloMonitor, getMonitorData);
 
 module.exports = router;
