@@ -1,24 +1,39 @@
 // frontend/src/contexts/AuthContext.jsx
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 
 export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem('token'));
-  const [user, setUser]   = useState(() => {
-    // Si quisieras hidratar desde localStorage, podrías hacerlo aquí
-    return null;
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem('user');
+    return storedUser ? JSON.parse(storedUser) : null;
   });
 
-  // Ahora login recibe token y perfil completo
+  // Guardar token en localStorage al cambiar
+  useEffect(() => {
+    if (token) {
+      localStorage.setItem('token', token);
+    } else {
+      localStorage.removeItem('token');
+    }
+  }, [token]);
+
+  // Guardar usuario en localStorage al cambiar
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('user');
+    }
+  }, [user]);
+
   function login(newToken, userData) {
-    localStorage.setItem('token', newToken);
     setToken(newToken);
     setUser(userData);
   }
 
   function logout() {
-    localStorage.removeItem('token');
     setToken(null);
     setUser(null);
   }
