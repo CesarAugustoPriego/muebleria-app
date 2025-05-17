@@ -1,7 +1,9 @@
 // frontend/src/pages/LoginPage.jsx
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Login from '../components/Auth/Login';
+
+import Navbar            from '../components/Auth/Navbar';
+import Login             from '../components/Auth/Login';
 
 import { AuthContext }     from '../contexts/AuthContext';
 import { CartContext }     from '../contexts/CartContext';
@@ -50,7 +52,7 @@ export default function LoginPage() {
       if (data.rol === 'admin') {
         navigate('/admin/dashboard');
       } else if (data.rol === 'monitor') {
-        navigate('/monitor');       // ← ruta para monitores
+        navigate('/monitor');
       } else {
         navigate('/');
       }
@@ -62,6 +64,7 @@ export default function LoginPage() {
 
   return (
     <>
+      <Navbar />
       <Login onSubmit={handleLogin} error={error} />
       {error && (
         <div style={{ color: 'red', textAlign: 'center', marginTop: '1rem' }}>

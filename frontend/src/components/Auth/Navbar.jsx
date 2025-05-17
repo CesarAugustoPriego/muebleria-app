@@ -1,3 +1,4 @@
+// frontend/src/components/Auth/Navbar.jsx
 import React, { useState, useContext } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Navbar.css';
@@ -12,12 +13,11 @@ export default function Navbar() {
   const location       = useLocation();
   const navigate       = useNavigate();
 
-  const { token, logout } = useContext(AuthContext);
-  const { clearCart }     = useContext(CartContext);
-  const { clearPurchases }= useContext(PurchaseContext);
+  const { token, logout, user } = useContext(AuthContext);
+  const { clearCart }           = useContext(CartContext);
+  const { clearPurchases }      = useContext(PurchaseContext);
 
-  const role = useContext(AuthContext).user?.rol || localStorage.getItem('rol');
-
+  const role       = user?.rol || localStorage.getItem('rol');
   const isLoggedIn = Boolean(token);
 
   const handleLogout = () => {
@@ -31,40 +31,92 @@ export default function Navbar() {
   return (
     <header className="navbar">
       <div className="navbar__brand">
-        <img src={logo} alt="Logo" className="navbar__logo" onClick={() => setOpen(false)} />
+        {/* Logo como botón de inicio */}
+        <Link to="/" onClick={() => setOpen(false)}>
+          <img src={logo} alt="Logo" className="navbar__logo" />
+        </Link>
       </div>
 
       <nav className={`navbar__links ${open ? 'open' : ''}`}>
         {/* Links para CLIENTE */}
         {isLoggedIn && role === 'cliente' && (
           <>
-            <Link to="/"            onClick={() => setOpen(false)} className={location.pathname === '/' ? 'active' : ''}>Inicio</Link>
-            <Link to="/catalogo"    onClick={() => setOpen(false)} className={location.pathname.startsWith('/catalogo') ? 'active' : ''}>Catálogo</Link>
-            <Link to="/carrito"     onClick={() => setOpen(false)} className={location.pathname === '/carrito' ? 'active' : ''}>🛒 Carrito</Link>
-            <Link to="/mis-compras" onClick={() => setOpen(false)} className={location.pathname === '/mis-compras' ? 'active' : ''}>🧾 Mis Compras</Link>
+            <Link
+              to="/catalogo"
+              onClick={() => setOpen(false)}
+              className={location.pathname.startsWith('/catalogo') ? 'active' : ''}
+            >
+              Catálogo
+            </Link>
+            <Link
+              to="/carrito"
+              onClick={() => setOpen(false)}
+              className={location.pathname === '/carrito' ? 'active' : ''}
+            >
+              🛒 Carrito
+            </Link>
+            <Link
+              to="/mis-compras"
+              onClick={() => setOpen(false)}
+              className={location.pathname === '/mis-compras' ? 'active' : ''}
+            >
+              🧾 Mis Compras
+            </Link>
           </>
         )}
 
         {/* Links para ADMIN */}
         {isLoggedIn && role === 'admin' && (
           <>
-            <Link to="/admin/dashboard" onClick={() => setOpen(false)} className={location.pathname === '/admin/dashboard' ? 'active' : ''}>Dashboard Admin</Link>
-            <Link to="/admin/agregar-producto" onClick={() => setOpen(false)} className={location.pathname === '/admin/agregar-producto' ? 'active' : ''}>Agregar Producto</Link>
-            <Link to="/admin/productos" onClick={() => setOpen(false)} className={location.pathname === '/admin/productos' ? 'active' : ''}>Productos</Link>
+            <Link
+              to="/admin/dashboard"
+              onClick={() => setOpen(false)}
+              className={location.pathname === '/admin/dashboard' ? 'active' : ''}
+            >
+              Dashboard Admin
+            </Link>
+            <Link
+              to="/admin/agregar-producto"
+              onClick={() => setOpen(false)}
+              className={location.pathname === '/admin/agregar-producto' ? 'active' : ''}
+            >
+              Agregar Producto
+            </Link>
+            <Link
+              to="/admin/productos"
+              onClick={() => setOpen(false)}
+              className={location.pathname === '/admin/productos' ? 'active' : ''}
+            >
+              Productos
+            </Link>
           </>
         )}
 
         {/* Links para MONITOR */}
         {isLoggedIn && role === 'monitor' && (
           <>
-            <Link to="/monitor" onClick={() => setOpen(false)} className={location.pathname === '/monitor' ? 'active' : ''}>Monitoreo</Link>
-            <Link to="/auditoria" onClick={() => setOpen(false)} className={location.pathname === '/auditoria' ? 'active' : ''}>Auditoría</Link>
+            <Link
+              to="/monitor"
+              onClick={() => setOpen(false)}
+              className={location.pathname === '/monitor' ? 'active' : ''}
+            >
+              Monitoreo
+            </Link>
+            <Link
+              to="/auditoria"
+              onClick={() => setOpen(false)}
+              className={location.pathname === '/auditoria' ? 'active' : ''}
+            >
+              Auditoría
+            </Link>
           </>
         )}
 
-        {/* Botón Cerrar Sesión para todos */}
+        {/* Botón Cerrar Sesión */}
         {isLoggedIn && (
-          <button onClick={handleLogout} className="navbar__logout">Cerrar Sesión</button>
+          <button onClick={handleLogout} className="navbar__logout">
+            Cerrar Sesión
+          </button>
         )}
       </nav>
 
@@ -72,7 +124,9 @@ export default function Navbar() {
         className={`navbar__hamburger ${open ? 'open' : ''}`}
         onClick={() => setOpen(o => !o)}
       >
-        <span /><span /><span />
+        <span />
+        <span />
+        <span />
       </button>
     </header>
   );

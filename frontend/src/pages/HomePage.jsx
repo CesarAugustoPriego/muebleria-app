@@ -8,13 +8,13 @@ import './HomePage.css';
 import heroBg from '../assets/img/imghero-bg.png';
 
 export default function HomePage() {
-  const [navOpen, setNavOpen]       = useState(false);
-  const toggleNav                   = () => setNavOpen(o => !o);
-  const { token }                   = useContext(AuthContext);
-  
+  const [navOpen, setNavOpen] = useState(false);
+  const toggleNav = () => setNavOpen(o => !o);
+  const { token } = useContext(AuthContext);
+
   const [topProducts, setTopProducts] = useState([]);
-  const [loadingTop, setLoadingTop]   = useState(true);
-  const [errorTop, setErrorTop]       = useState(null);
+  const [loadingTop, setLoadingTop] = useState(true);
+  const [errorTop, setErrorTop] = useState(null);
 
   // 1) Carga los 3 productos más vendidos
   useEffect(() => {
@@ -72,17 +72,18 @@ export default function HomePage() {
 
       {/* CATEGORÍAS */}
       <section id="tipos" className="section tipos">
-        <h2>Categorías Disponibles</h2>
+        <h2>Tipos de Mueble</h2>
         <div className="cards">
-          {categorias.map(cat => {
-            // toma el slug de la ruta padre: /catalogo/recamara
-            const base = cat.items[0].path.split('/').slice(0,3).join('/');
-            return (
-              <Link key={cat.id} to={base} className="card card-link">
-                <h3>{cat.nombre}</h3>
-              </Link>
-            );
-          })}
+          {categorias.map(cat => (
+            <Link
+              key={cat.id}
+              to={cat.items[0].path.replace(/\/catalogo/, '/catalogo')}
+              /* Ajusta aquí tu prefijo de ruta: ej "/catalogo/recamara" */
+              className="card card-link"
+            >
+              <h3>{cat.nombre}</h3>
+            </Link>
+          ))}
         </div>
       </section>
 
@@ -90,7 +91,7 @@ export default function HomePage() {
       <section id="productos" className="section destacados">
         <h2>Productos más vendidos</h2>
         {loadingTop && <p>Cargando productos más vendidos…</p>}
-        {errorTop   && <p className="text-red-600">{errorTop}</p>}
+        {errorTop && <p className="text-red-600">{errorTop}</p>}
         <div className="destacados-grid">
           {topProducts.map(p => (
             <div className="product-card" key={p.id}>
