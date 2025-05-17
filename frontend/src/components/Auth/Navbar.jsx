@@ -42,8 +42,8 @@ export default function Navbar() {
         <Link to="/carrito"     onClick={() => setOpen(false)} className={location.pathname === '/carrito'     ? 'active' : ''}>🛒 Carrito</Link>
         <Link to="/mis-compras" onClick={() => setOpen(false)} className={location.pathname === '/mis-compras' ? 'active' : ''}>🧾 Mis Compras</Link>
 
-        {/* Enlace de Monitoreo solo para monitor o admin */}
-        {isLoggedIn && (role === 'monitor' || role === 'admin') && (
+        {/* Enlace de Monitoreo solo para monitor */}
+        {isLoggedIn && role === 'monitor' && (
           <Link
             to="/monitor"
             onClick={() => setOpen(false)}
@@ -61,6 +61,17 @@ export default function Navbar() {
             className={location.pathname === '/auditoria' ? 'active' : ''}
           >
             Auditoría
+          </Link>
+        )}
+
+        {/* Enlace Dashboard Admin solo para admin */}
+        {isLoggedIn && role === 'admin' && (
+          <Link
+            to="/admin/dashboard"
+            onClick={() => setOpen(false)}
+            className={location.pathname === '/admin/dashboard' ? 'active' : ''}
+          >
+            Dashboard Admin
           </Link>
         )}
 
