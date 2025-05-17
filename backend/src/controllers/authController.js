@@ -3,6 +3,7 @@ const crypto    = require('crypto');
 const bcrypt    = require('bcrypt');
 const jwt       = require('jsonwebtoken');
 const Usuario   = require('../models/Usuario');
+const { registrarAuditoria } = require('../utils/auditoria'); // Importar función auditoría
 require('dotenv').config();
 
 /**
@@ -25,13 +26,28 @@ async function register(req, res) {
     const password_hash = await bcrypt.hash(password, 10);
 
     // Crear usuario con rol por defecto 'cliente'
-    await Usuario.create({
+    const nuevo = await Usuario.create({
       nombres,
       apellidos,
       email,
       telefono,
       password_hash,
       rol: 'cliente'
+    });
+
+    // REGISTRO DE AUDITORÍA sin pasar usuario (se resuelve en util)
+    await registrarAuditoria({
+      usuario_id: nuevo.id,
+      accion: 'CREAR',
+      entidad: 'usuario',
+      entidad_id: nuevo.id,
+      detalles: {
+        nombres,
+        apellidos,
+        email,
+        telefono,
+        rol: 'cliente'
+      }
     });
 
     return res.status(201).json({ msg: 'Usuario registrado con éxito' });

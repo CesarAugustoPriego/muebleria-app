@@ -18,7 +18,6 @@ export default function Navbar() {
   const { clearPurchases }= useContext(PurchaseContext);
 
   // Obtener rol desde AuthContext o localStorage
-  // Si AuthContext provee 'rol', úsalo; si no, usa localStorage
   const role = useContext(AuthContext).user?.rol || localStorage.getItem('rol');
 
   const isLoggedIn = Boolean(token);
@@ -51,6 +50,17 @@ export default function Navbar() {
             className={location.pathname === '/monitor' ? 'active' : ''}
           >
             Monitoreo
+          </Link>
+        )}
+
+        {/* Enlace de Auditoría solo para monitor */}
+        {isLoggedIn && role === 'monitor' && (
+          <Link
+            to="/auditoria"
+            onClick={() => setOpen(false)}
+            className={location.pathname === '/auditoria' ? 'active' : ''}
+          >
+            Auditoría
           </Link>
         )}
 

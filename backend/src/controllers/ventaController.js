@@ -1,4 +1,3 @@
-// backend/src/controllers/ventaController.js
 const Venta           = require('../models/Venta');
 const VentaDetalle    = require('../models/VentaDetalle');
 const Producto        = require('../models/Producto');
@@ -7,6 +6,7 @@ const Categoria       = require('../models/Categoria');
 const DireccionEnvio  = require('../models/DireccionEnvio');
 const MetodoPago      = require('../models/MetodoPago');
 const Usuario         = require('../models/Usuario');
+const { registrarAuditoria } = require('../utils/auditoria'); // Importa aquí
 
 const estadosPermitidos = ['pedido','enviado','en reparto','entregado'];
 
@@ -63,6 +63,15 @@ exports.actualizarEstado = async (req, res) => {
     if (!updated) {
       return res.status(404).json({ msg:'Venta no encontrada' });
     }
+
+    // AUDITORÍA: Estado actualizado
+    await registrarAuditoria({
+      usuario_id: req.user?.id,
+      accion: 'ACTUALIZAR_ESTADO',
+      entidad: 'venta',
+      entidad_id: id,
+      detalles: { nuevo_estado: estado }
+    });
 
     const ventaActualizada = await Venta.findByPk(id, {
       include: [

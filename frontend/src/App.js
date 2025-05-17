@@ -16,7 +16,7 @@ import DashboardAdmin   from './adminPages/DashboardAdmin';
 import ProductosAdmin   from './adminPages/ProductosAdmin';
 
 import MonitorPage      from './monitorPages/MonitorPage';
-
+import AuditoriaPage from './monitorPages/AuditoriaPage';
 import PrivateRoute from './routes/PrivateRoute';
 
 function App() {
@@ -47,6 +47,7 @@ function App() {
         {/* Ruta protegida para monitoreo (monitor o admin) */}
         <Route element={<PrivateRoute allowedRoles={[ 'monitor', 'admin' ]} />}>
           <Route path="/monitor" element={<MonitorPage />} />
+          <Route path="/auditoria" element={<AuditoriaPage />} />
         </Route>
 
         {/* Ruta catch-all: redirigir a home */}

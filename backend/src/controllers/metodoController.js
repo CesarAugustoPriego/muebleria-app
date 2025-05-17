@@ -1,6 +1,7 @@
 // backend/src/controllers/metodoController.js
 const { MetodoPago } = require('../models');
 const { ForeignKeyConstraintError } = require('sequelize');
+const { registrarAuditoria } = require('../utils/auditoria');
 
 exports.listarMetodos = async (req, res) => {
   try {
@@ -18,6 +19,16 @@ exports.crearMetodo = async (req, res) => {
     const userId = req.user.id;
     const { tipo, token_last4, titular } = req.body;
     const mp = await MetodoPago.create({ fk_usuario: userId, tipo, token_last4, titular });
+
+    // AUDITORÍA
+    await registrarAuditoria({
+      usuario_id: userId,
+      accion: 'CREAR',
+      entidad: 'metodo_pago',
+      entidad_id: mp.id,
+      detalles: { tipo, token_last4, titular }
+    });
+
     res.status(201).json(mp);
   } catch (e) {
     console.error(e);
@@ -30,6 +41,9 @@ exports.eliminarMetodo = async (req, res) => {
     const userId = req.user.id;
     const { id } = req.params;
 
+    // Recupera antes de borrar, para guardar en la auditoría
+    const mp = await MetodoPago.findOne({ where: { id, fk_usuario: userId } });
+
     const eliminado = await MetodoPago.destroy({
       where: { id, fk_usuario: userId }
     });
@@ -38,9 +52,17 @@ exports.eliminarMetodo = async (req, res) => {
       return res.status(404).json({ msg: 'Método no encontrado' });
     }
 
+    // AUDITORÍA
+    await registrarAuditoria({
+      usuario_id: userId,
+      accion: 'ELIMINAR',
+      entidad: 'metodo_pago',
+      entidad_id: id,
+      detalles: mp ? { tipo: mp.tipo, token_last4: mp.token_last4, titular: mp.titular } : {}
+    });
+
     return res.json({ msg: 'Método eliminado' });
   } catch (e) {
-    // Si hay ventas asociadas, Sequelize lanza ForeignKeyConstraintError
     if (e instanceof ForeignKeyConstraintError) {
       return res
         .status(400)

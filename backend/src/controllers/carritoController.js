@@ -8,6 +8,7 @@ const {
   VentaDetalle,
   sequelize
 } = require('../models');
+const { registrarAuditoria } = require('../utils/auditoria'); // Importa aquí
 
 /**
  * Obtiene o crea (sólo si es necesario) el carrito "abierto" del usuario.
@@ -61,6 +62,18 @@ async function agregarAlCarrito(req, res) {
     if (detalle) {
       detalle.cantidad += cantidad;
       await detalle.save();
+
+      // AUDITORÍA: Actualizó cantidad en el carrito
+      await registrarAuditoria({
+        usuario_id: uid,
+        accion: 'ACTUALIZAR_CANTIDAD',
+        entidad: 'carrito_detalle',
+        entidad_id: detalle.id,
+        detalles: {
+          productoId,
+          nuevaCantidad: detalle.cantidad
+        }
+      });
     } else {
       const prod = await Producto.findByPk(productoId);
       if (!prod) return res.status(404).json({ msg: 'Producto no existe' });
@@ -70,6 +83,19 @@ async function agregarAlCarrito(req, res) {
         fk_producto:    productoId,
         cantidad,
         precio_unitario: prod.precio_unitario
+      });
+
+      // AUDITORÍA: Producto agregado al carrito
+      await registrarAuditoria({
+        usuario_id: uid,
+        accion: 'AGREGAR',
+        entidad: 'carrito_detalle',
+        entidad_id: detalle.id,
+        detalles: {
+          productoId,
+          cantidad,
+          precio_unitario: prod.precio_unitario
+        }
       });
     }
 
@@ -96,12 +122,36 @@ async function actualizarCantidad(req, res) {
     }
 
     if (cantidad < 1) {
+      // AUDITORÍA: Producto eliminado del carrito
+      await registrarAuditoria({
+        usuario_id: uid,
+        accion: 'ELIMINAR',
+        entidad: 'carrito_detalle',
+        entidad_id: detalle.id,
+        detalles: {
+          productoId: detalle.fk_producto,
+          cantidad: detalle.cantidad
+        }
+      });
       await detalle.destroy();
       return res.json({ msg: 'Producto eliminado' });
     }
 
     detalle.cantidad = cantidad;
     await detalle.save();
+
+    // AUDITORÍA: Cantidad actualizada
+    await registrarAuditoria({
+      usuario_id: uid,
+      accion: 'ACTUALIZAR_CANTIDAD',
+      entidad: 'carrito_detalle',
+      entidad_id: detalle.id,
+      detalles: {
+        productoId: detalle.fk_producto,
+        nuevaCantidad: cantidad
+      }
+    });
+
     return res.json({ msg: 'Cantidad actualizada', detalle });
   } catch (e) {
     console.error(e);
@@ -170,6 +220,20 @@ async function checkout(req, res) {
     }, { transaction: t });
 
     await t.commit();
+
+    // AUDITORÍA: Checkout realizado (compra finalizada)
+    await registrarAuditoria({
+      usuario_id: uid,
+      accion: 'CHECKOUT',
+      entidad: 'carrito',
+      entidad_id: carrito.id,
+      detalles: {
+        ventaId: venta.id,
+        total: total,
+        cantidad_productos: detalles.length
+      }
+    });
+
     return res.json({ msg: 'Checkout completado', ventaId: venta.id });
   } catch (e) {
     console.error(e);

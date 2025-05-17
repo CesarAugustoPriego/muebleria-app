@@ -1,5 +1,6 @@
 // backend/src/controllers/direccionController.js
 const { DireccionEnvio } = require('../models');
+const { registrarAuditoria } = require('../utils/auditoria'); // Importa aquí
 
 /**
  * GET /api/direcciones
@@ -27,6 +28,16 @@ exports.crearDireccion = async (req, res) => {
     const userId = req.user.id;
     const data = { ...req.body, fk_usuario: userId };
     const dir = await DireccionEnvio.create(data);
+
+    // AUDITORÍA
+    await registrarAuditoria({
+      usuario_id: userId,
+      accion: 'CREAR',
+      entidad: 'direccion_envio',
+      entidad_id: dir.id,
+      detalles: data
+    });
+
     res.status(201).json(dir);
   } catch (e) {
     console.error(e);
@@ -45,6 +56,16 @@ exports.actualizarDireccion = async (req, res) => {
       return res.status(404).json({ msg: 'Dirección no encontrada' });
     }
     await dir.update(req.body);
+
+    // AUDITORÍA
+    await registrarAuditoria({
+      usuario_id: req.user.id,
+      accion: 'EDITAR',
+      entidad: 'direccion_envio',
+      entidad_id: dir.id,
+      detalles: req.body
+    });
+
     res.json(dir);
   } catch (e) {
     console.error(e);

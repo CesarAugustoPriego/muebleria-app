@@ -4,6 +4,7 @@ const fs = require('fs');
 const Producto = require('../models/Producto');
 const { sequelize } = require ('../models');
 const { QueryTypes } = require ('sequelize');
+const { registrarAuditoria } = require('../utils/auditoria'); // Importa aquí
 
 /**
  * POST /api/productos
@@ -24,6 +25,19 @@ exports.crearProducto = async (req, res) => {
       fk_categoria: parseInt(fk_categoria, 10),
       fk_modelo: parseInt(fk_modelo, 10),
       imagen_url: `/uploads/${req.file.filename}`
+    });
+
+    // AUDITORÍA
+    await registrarAuditoria({
+      usuario_id: req.user?.id,
+      accion: 'CREAR',
+      entidad: 'producto',
+      entidad_id: nuevo.id,
+      detalles: {
+        nombre: nuevo.nombre,
+        precio: nuevo.precio_unitario,
+        existencia: nuevo.existencia
+      }
     });
 
     res.status(201).json({ producto: nuevo });
@@ -60,6 +74,18 @@ exports.eliminarProducto = async (req, res) => {
     if (!producto) {
       return res.status(404).json({ msg: 'Producto no encontrado' });
     }
+
+    // AUDITORÍA antes de eliminar
+    await registrarAuditoria({
+      usuario_id: req.user?.id,
+      accion: 'ELIMINAR',
+      entidad: 'producto',
+      entidad_id: id,
+      detalles: {
+        nombre: producto.nombre,
+        precio: producto.precio_unitario
+      }
+    });
 
     // Borrar registro
     await producto.destroy();

@@ -1,28 +1,41 @@
-// backend/src/utils/auditoria.js
 const sequelize = require('../config/database');
 
-/**
- * Registra un evento en la tabla de auditoría.
- * @param {Object} params
- * @param {number} params.usuario_id - ID del usuario
- * @param {string} params.usuario - username o email del usuario
- * @param {string} params.accion - 'CREAR', 'EDITAR', 'ELIMINAR', etc.
- * @param {string} params.entidad - tabla afectada ('producto', 'usuario', etc.)
- * @param {number} params.entidad_id - ID de la fila afectada
- * @param {string|Object} params.detalles - Descripción o JSON con los cambios
- */
 async function registrarAuditoria({ usuario_id, usuario, accion, entidad, entidad_id, detalles }) {
+  // Si no viene usuario, buscarlo por usuario_id
+  if ((!usuario || usuario === 'Desconocido') && usuario_id) {
+    try {
+      const result = await sequelize.query(
+        `SELECT username, nombres, apellidos FROM usuario WHERE id = ? LIMIT 1`,
+        { replacements: [usuario_id], type: sequelize.QueryTypes.SELECT }
+      );
+      const row = result[0];  // Primer registro o undefined
+
+      if (row) {
+        // Formar un string: "username (nombres apellidos)"
+        const nombreCompleto = `${row.nombres || ''} ${row.apellidos || ''}`.trim();
+        usuario = row.username
+          ? `${row.username} (${nombreCompleto})`
+          : nombreCompleto || 'Desconocido';
+      } else {
+        usuario = 'Desconocido';
+      }
+    } catch (e) {
+      console.error('Error obteniendo usuario en auditoria:', e);
+      usuario = 'Desconocido';
+    }
+  }
+
   await sequelize.query(
-    `INSERT INTO auditoria (usuario_id, usuario, accion, entidad, entidad_id, detalles)
-     VALUES (?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO auditoria (fecha, usuario_id, usuario, accion, entidad, entidad_id, detalles)
+     VALUES (NOW(), ?, ?, ?, ?, ?, ?)`,
     {
       replacements: [
         usuario_id || null,
-        usuario || null,
+        usuario || 'Desconocido',
         accion,
         entidad,
-        entidad_id || null,
-        detalles ? (typeof detalles === 'object' ? JSON.stringify(detalles) : detalles) : null
+        entidad_id,
+        typeof detalles === "object" ? JSON.stringify(detalles) : detalles
       ]
     }
   );
