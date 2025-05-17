@@ -1,52 +1,226 @@
+/* MisComprasPage.css /
+/ Variables para colores y estilos consistentes */
+:root {
+--primary-color: #8d6e63;
+--primary-light: #be9c91;
+--primary-dark: #5f4339;
+--background-color: #f7f7f7;
+--card-background: #ffffff;
+--text-primary: #333333;
+--text-secondary: #666666;
+--text-light: #888888;
+--accent-color: #e0886d;
+--border-color: #e0e0e0;
+--product-bg: #f8f8f8;
+--shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+--shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.12);
+--status-enviado: #4caf50;
+--status-pedido: #ff9800;
+--status-entregado: #2196f3;
+--status-cancelado: #f44336;
+--status-default: #9e9e9e;
+}
+body {
+background-color: var(--background-color);
+font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+margin: 0;
+padding: 0;
+color: var(--text-primary);
+}
+/* Container principal */
 .mis-compras-container {
-  padding: 1rem;
-  max-width: 900px;
-  margin: 0 auto;
+padding: 5rem;
+max-width: 900px;
+margin: 0 auto;
 }
-
+.mis-compras-container h2 {
+display: flex;
+align-items: center;
+font-size: 1.8rem;
+margin-bottom: 1.5rem;
+color: var(--primary-dark);
+border-bottom: 2px solid var(--primary-light);
+padding-bottom: 0.75rem;
+}
+/* Tarjeta de compra */
 .compra-card {
-  background: #fff;
-  margin: 1.5rem 0;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+background: var(--card-background);
+margin: 1.5rem 0;
+padding: 1.5rem;
+border-radius: 12px;
+box-shadow: var(--shadow);
+transition: all 0.2s ease;
+border: 1px solid var(--border-color);
 }
-
+.compra-card:hover {
+box-shadow: var(--shadow-hover);
+transform: translateY(-2px);
+}
+.compra-card h3 {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-top: 0;
+color: var(--primary-dark);
+font-size: 1.25rem;
+border-bottom: 1px solid var(--border-color);
+padding-bottom: 0.75rem;
+}
+/* Estado de compra - Badges coloridos */
+.compra-card p strong {
+color: var(--primary-dark);
+}
+p strong:first-child + span {
+margin-left: 0.5rem;
+padding: 0.25rem 0.75rem;
+border-radius: 50px;
+font-size: 0.85rem;
+font-weight: 500;
+display: inline-block;
+}
+/* Colores para estados */
+.compra-card p:nth-child(2) span:last-child {
+background-color: var(--status-enviado);
+color: white;
+}
+.compra-card p:nth-child(2) span:last-child:contains("pedido") {
+background-color: var(--status-pedido);
+color: white;
+}
+/* Información de dirección y pago */
+.compra-card p {
+margin: 0.5rem 0;
+line-height: 1.5;
+}
+/* Lista de productos */
 .productos {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-top: 1rem;
+display: flex;
+flex-wrap: wrap;
+gap: 1rem;
+margin-top: 1.25rem;
+margin-bottom: 1.25rem;
 }
-
 .producto {
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  background: #f8f8f8;
-  padding: 0.75rem;
-  border-radius: 6px;
-  flex: 1 1 calc(50% - 1rem);
+display: flex;
+align-items: flex-start;
+gap: 1.25rem;
+background: var(--product-bg);
+padding: 1rem;
+border-radius: 8px;
+flex: 1 1 calc(50% - 1.25rem);
+border: 1px solid rgba(0,0,0,0.05);
+transition: transform 0.2s ease;
 }
-
+.producto:hover {
+transform: translateY(-3px);
+box-shadow: 0 3px 10px rgba(0,0,0,0.07);
+}
+/* Imágenes de producto */
 .producto img {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 4px;
+width: 90px;
+height: 90px;
+object-fit: cover;
+border-radius: 6px;
+box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
-
+/* Información de producto */
+.producto-info {
+flex: 1;
+}
 .producto-info p {
-  margin: 0.25rem 0;
+margin: 0.35rem 0;
+font-size: 0.95rem;
 }
-
+.producto-info p:first-child {
+font-weight: 600;
+color: var(--primary-dark);
+font-size: 1.05rem;
+}
+/* Precio total */
 .total {
-  text-align: right;
-  font-weight: bold;
-  margin-top: 1rem;
+text-align: right;
+font-weight: bold;
+margin-top: 1rem;
+font-size: 1.2rem;
+color: var(--primary-dark);
+background-color: rgba(0,0,0,0.02);
+padding: 0.75rem 1rem;
+border-radius: 8px;
 }
-
+/* Estados de carga y error */
 .loading, .error {
-  text-align: center;
-  margin-top: 2rem;
+text-align: center;
+margin-top: 3rem;
+padding: 2rem;
+border-radius: 8px;
+background-color: var(--card-background);
+box-shadow: var(--shadow);
+}
+.loading {
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+}
+.loading::before {
+content: "";
+width: 40px;
+height: 40px;
+border: 4px solid rgba(0,0,0,0.1);
+border-left-color: var(--primary-color);
+border-radius: 50%;
+animation: spin 1s linear infinite;
+margin-bottom: 1rem;
+}
+.error {
+color: var(--status-cancelado);
+}
+@keyframes spin {
+to {
+transform: rotate(360deg);
+}
+}
+/* Responsividad */
+@media screen and (max-width: 768px) {
+.productos {
+flex-direction: column;
+}
+.producto {
+flex: 1 1 100%;
+}
+.compra-card {
+padding: 1rem;
+}
+}
+/* Mejoras adicionales para destacar información importante */
+.metodo-pago {
+display: inline-flex;
+align-items: center;
+margin-top: 0.25rem;
+}
+.metodo-pago::before {
+content: "💳";
+margin-right: 0.5rem;
+}
+.direccion-entrega {
+display: inline-flex;
+align-items: center;
+margin-top: 0.25rem;
+max-width: 80%;
+}
+.direccion-entrega::before {
+content: "📍";
+margin-right: 0.5rem;
+}
+/* Divide la información en secciones */
+.seccion-info {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 1rem;
+margin: 1rem 0;
+}
+@media screen and (max-width: 600px) {
+.seccion-info {
+grid-template-columns: 1fr;
+}
 }
