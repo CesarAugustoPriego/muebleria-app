@@ -359,3 +359,9 @@ html {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+/* Quitar subrayado de los links en las cards de Tipos de Mueble */
+.section.tipos .card-link {
+  text-decoration: none;
+}
+

@@ -1,29 +1,47 @@
-import React, { useEffect, useState } from 'react';
+// frontend/src/adminPages/ProductosAdmin.jsx
+import React, { useEffect, useState, useContext } from 'react';
 import Navbar from '../components/Auth/Navbar';
+import { AuthContext } from '../contexts/AuthContext';
 import './ProductosAdmin.css';
 
 const ProductosAdmin = () => {
+  const { token } = useContext(AuthContext);
   const [productos, setProductos] = useState([]);
 
+  // Carga la lista de productos
   const fetchProductos = async () => {
-    const res = await fetch('/api/producto');
-    const data = await res.json();
-    setProductos(data);
+    try {
+      const res = await fetch('/api/producto');
+      if (!res.ok) throw new Error(`Error ${res.status}`);
+      const data = await res.json();
+      setProductos(data);
+    } catch (err) {
+      console.error(err);
+      alert('❌ No se pudieron cargar los productos');
+    }
   };
 
-  const eliminarProducto = async (id) => {
+  // Elimina un producto enviando el token
+  const eliminarProducto = async id => {
     const confirmar = window.confirm('¿Eliminar este producto?');
     if (!confirmar) return;
 
-    const res = await fetch(`/api/producto/${id}`, {
-      method: 'DELETE'
-    });
-
-    if (res.ok) {
+    try {
+      const res = await fetch(`/api/producto/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      if (!res.ok) {
+        const body = await res.json();
+        throw new Error(body.msg || `Error ${res.status}`);
+      }
       alert('✅ Producto eliminado correctamente');
       fetchProductos();
-    } else {
-      alert('❌ Error al eliminar el producto');
+    } catch (err) {
+      console.error(err);
+      alert('❌ Error al eliminar el producto: ' + err.message);
     }
   };
 
@@ -67,12 +85,22 @@ const ProductosAdmin = () => {
                 <td>${parseFloat(p.precio_unitario).toFixed(2)}</td>
                 <td>{p.existencia}</td>
                 <td>
-                  <button className="eliminar-btn" onClick={() => eliminarProducto(p.id)}>
+                  <button
+                    className="eliminar-btn"
+                    onClick={() => eliminarProducto(p.id)}
+                  >
                     🗑 Eliminar
                   </button>
                 </td>
               </tr>
             ))}
+            {productos.length === 0 && (
+              <tr>
+                <td colSpan="6" style={{ textAlign: 'center' }}>
+                  No hay productos registrados.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

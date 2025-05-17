@@ -1,14 +1,21 @@
-import React, { useState, useEffect } from 'react';
+// frontend/src/adminPages/AgregarProducto.jsx
+import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './AgregarProducto.css';
 import Navbar from '../components/Auth/Navbar';
+import { AuthContext } from '../contexts/AuthContext';
 
 export default function AgregarProducto() {
+  const { token } = useContext(AuthContext);
+  const navigate = useNavigate();
+
   const [categorias, setCategorias]             = useState([]);
   const [todosModelos, setTodosModelos]         = useState([]);
   const [modelosFiltrados, setModelosFiltrados] = useState([]);
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState('');
   const [modeloSeleccionado, setModeloSeleccionado]       = useState('');
   const [preview, setPreview]                   = useState(null);
+  const [error, setError]                       = useState('');
 
   // Carga inicial de categorías y modelos
   useEffect(() => {
@@ -23,7 +30,7 @@ export default function AgregarProducto() {
       .catch(console.error);
   }, []);
 
-  // Filtra los modelos cuando cambia la categoría
+  // Filtrar modelos cuando cambia la categoría
   useEffect(() => {
     if (!categoriaSeleccionada) {
       setModelosFiltrados([]);
@@ -52,8 +59,10 @@ export default function AgregarProducto() {
 
   const handleSubmit = async e => {
     e.preventDefault();
+    setError('');
+
     const form = e.target;
-    const fd = new FormData();
+    const fd   = new FormData();
     fd.append('nombre', form.nombre.value);
     fd.append('descripcion', form.descripcion.value);
     fd.append('precio', form.precio.value);
@@ -62,16 +71,31 @@ export default function AgregarProducto() {
     fd.append('fk_modelo', modeloSeleccionado);
     fd.append('imagen', form.imagen.files[0]);
 
-    const res = await fetch('/api/producto', { method: 'POST', body: fd });
-    if (res.ok) {
+    try {
+      const res = await fetch('/api/producto', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          // ¡No añadas Content-Type! El browser se encarga
+        },
+        body: fd
+      });
+
+      if (!res.ok) {
+        const body = await res.json();
+        throw new Error(body.msg || `Error ${res.status}`);
+      }
+
       alert('✅ Producto agregado');
       form.reset();
       setPreview(null);
       setCategoriaSeleccionada('');
       setModelosFiltrados([]);
       setModeloSeleccionado('');
-    } else {
-      alert('❌ Error al guardar');
+      navigate('/admin/productos');
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
     }
   };
 
@@ -80,7 +104,8 @@ export default function AgregarProducto() {
       <Navbar />
       <div className="form-container">
         <h2>Agregar Producto</h2>
-        <form onSubmit={handleSubmit}>
+        {error && <p className="error">ERROR: {error}</p>}
+        <form onSubmit={handleSubmit} encType="multipart/form-data">
           <label>
             Nombre
             <input type="text" name="nombre" required />

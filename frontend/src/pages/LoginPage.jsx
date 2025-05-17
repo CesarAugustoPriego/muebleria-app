@@ -50,7 +50,8 @@ export default function LoginPage() {
         throw new Error(perfil.msg || 'Error al cargar perfil');
       }
 
-      // 3) Guardamos token + perfil en el contexto (y localStorage)
+      // 3) Guardamos token + perfil en el contexto
+      //    (AuthContext.login ahora acepta ambos argumentos)
       login(data.token, perfil);
 
       // 4) Limpiamos carrito y compras de otras sesiones

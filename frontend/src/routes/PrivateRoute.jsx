@@ -1,22 +1,21 @@
 // frontend/src/routes/PrivateRoute.jsx
-import React from 'react';
+import React, { useContext } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
+import { AuthContext } from '../contexts/AuthContext';
 
 export default function PrivateRoute({ allowedRoles }) {
-  // Obtener token y rol del usuario desde localStorage o contexto
-  const token = localStorage.getItem('token');
-  const rol = localStorage.getItem('rol'); // O obtener del contexto AuthContext si tienes
+  const { token, user } = useContext(AuthContext);
 
+  // 1) Si no hay token => al login
   if (!token) {
-    // No autenticado, redirige a login
     return <Navigate to="/login" replace />;
   }
 
-  if (!allowedRoles.includes(rol)) {
-    // No autorizado para esta ruta, redirige a home o a una página de "No autorizado"
+  // 2) Si sí hay token pero rol no permitido => al home (o 403)
+  if (allowedRoles && (!user || !allowedRoles.includes(user.rol))) {
     return <Navigate to="/" replace />;
   }
 
-  // Usuario autenticado y autorizado, renderizar componente hijo(s)
+  // 3) OK => renderizo la ruta hija
   return <Outlet />;
 }
