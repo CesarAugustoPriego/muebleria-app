@@ -7,6 +7,7 @@ import { categorias } from '../data/catalogData';
 import './HomePage.css';
 import heroBg from '../assets/img/imghero-bg.png';
 import SeccionComentarios from '../components/Comentarios/SeccionComentarios';
+import SeccionContacto from '../components/Contacto/SeccionContacto';
 
 export default function HomePage() {
   const [navOpen, setNavOpen] = useState(false);
@@ -143,17 +144,9 @@ export default function HomePage() {
 
 
       {/* CONTACTO */}
-      <section id="contacto" className="section contacto">
-        <h2>Contacto</h2>
-        <form className="contact-form">
-          <input type="text" placeholder="Nombre" required />
-          <input type="email" placeholder="Correo electrónico" required />
-          <textarea placeholder="Mensaje" rows="4" required />
-          <button type="submit" className="btn primary">
-            Enviar
-          </button>
-        </form>
-      </section>
+      <div className="contenedor-form">
+        <SeccionContacto />
+      </div>
 
       {/* FOOTER */}
       <footer className="footer">
