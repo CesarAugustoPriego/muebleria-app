@@ -66,8 +66,8 @@ export default function Login({ onSubmit, error }) {
               onClick={() => setShowPwd(p => !p)}
             >
               {showPwd
-                ? <FaEyeSlash  />
-                : <FaEye  />
+                ? <FaEye  />
+                : <FaEyeSlash  />
               }
             </button>
           </div>

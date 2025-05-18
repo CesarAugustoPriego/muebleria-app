@@ -15,7 +15,7 @@ const monitorRoutes   = require('./routes/monitor');
 const categoriaRoutes = require('./routes/categoria');
 const modeloRoutes    = require('./routes/modelo');
 const auditoriaRoutes = require('./routes/auditoria');
-
+const comentarios = require('./routes/comentarios');
 
 
 const app = express();
@@ -71,7 +71,7 @@ app.use('/api/categorias', categoriaRoutes);
 app.use('/api/modelos', modeloRoutes);
 app.use('/api/auditoria', require('./routes/auditoria'));
 app.use('/api/usuario', require('./routes/usuario'));
-
+app.use('/api/comentarios', comentarios);
 
 // 7) Ruta de comprobación
 app.get('/', (_, res) => res.send('API OK'));

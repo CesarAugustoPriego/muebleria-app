@@ -6,6 +6,7 @@ import { AuthContext } from '../contexts/AuthContext';
 import { categorias } from '../data/catalogData';
 import './HomePage.css';
 import heroBg from '../assets/img/imghero-bg.png';
+import SeccionComentarios from '../components/Comentarios/SeccionComentarios';
 
 export default function HomePage() {
   const [navOpen, setNavOpen] = useState(false);
@@ -136,19 +137,10 @@ export default function HomePage() {
       </section>
 
       {/* TESTIMONIOS */}
-      <section id="testimonios" className="section testimonios">
-        <h2>Lo que dicen nuestros clientes</h2>
-        <div className="cards">
-          <blockquote className="testimonial">
-            "Excelente calidad y servicio. ¡Lo recomiendo!"
-            <cite>— Ana G.</cite>
-          </blockquote>
-          <blockquote className="testimonial">
-            "Los muebles llegaron a tiempo y tal cual esperaba."
-            <cite>— Luis M.</cite>
-          </blockquote>
-        </div>
-      </section>
+      <div className="contenedor-form">
+        <SeccionComentarios />
+      </div>
+
 
       {/* CONTACTO */}
       <section id="contacto" className="section contacto">

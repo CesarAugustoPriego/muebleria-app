@@ -123,8 +123,8 @@ export default function Registro() {
               onClick={() => setMostrarPassword(prev => !prev)}
             >
               {mostrarPassword
-                ? <FaEyeSlash />
-                : <FaEye />
+                ? <FaEye />
+                : <FaEyeSlash />
               }
             </button>
           </div>
