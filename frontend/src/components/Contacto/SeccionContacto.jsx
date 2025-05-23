@@ -32,7 +32,6 @@ export default function SeccionContacto() {
     <section id="contacto" className="section contacto">
       <h2>Contacto</h2>
       <form className="contact-form" onSubmit={handleSubmit}>
-        <label htmlFor="contacto-nombre">Tu nombre</label>
         <input
           id="contacto-nombre"
           type="text"
@@ -42,7 +41,6 @@ export default function SeccionContacto() {
           required
         />
 
-        <label htmlFor="contacto-correo">Tu correo</label>
         <input
           id="contacto-correo"
           type="email"
@@ -52,7 +50,6 @@ export default function SeccionContacto() {
           required
         />
 
-        <label htmlFor="contacto-asunto">Asunto</label>
         <input
           id="contacto-asunto"
           type="text"
@@ -62,7 +59,7 @@ export default function SeccionContacto() {
           required
         />
 
-        <label htmlFor="contacto-mensaje">Mensaje</label>
+        
         <textarea
           id="contacto-mensaje"
           placeholder="Mensaje"
